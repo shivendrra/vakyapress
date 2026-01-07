@@ -45,15 +45,17 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <nav className="sticky top-0 z-50 bg-vakya-paper/95 backdrop-blur-sm border-b border-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-28">
 
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer" onClick={() => navigate('/')}>
-            <img
-              src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo3.png"
-              alt="Vakya"
-              className="h-10 w-auto"
-            />
+            <div className="w-28 h-28 relative">
+              <img
+                src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo7.png"
+                alt="Vakya"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
 
           {/* Desktop Menu */}

@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import { MOCK_ARTICLES } from './mockData';
-import { Article, UserProfile, UserRole, SiteContent } from '../types';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc } from "firebase/firestore";
+import { Article, UserProfile, UserRole, SiteContent, Product } from '../types';
 
 // User provided configuration
 const firebaseConfig = {
@@ -30,15 +29,14 @@ export const googleProvider = new GoogleAuthProvider();
 // Helper to determine role based on email/username
 const determineRoleFromEmail = (email: string): UserRole => {
   const normalizedEmail = email.toLowerCase();
-
-  // Specific Admin/Writer mapping requested
+  
+  // Specific Admin/Writer mapping
   if (normalizedEmail.startsWith('shivendrra')) return 'admin';
   if (normalizedEmail.startsWith('pradyumn')) return 'admin';
   if (normalizedEmail.startsWith('aakash')) return 'writer';
-
-  // Generic logic for other vakyapress emails
-  if (normalizedEmail.endsWith('@vakyapress.com')) return 'writer';
-
+  
+  if (normalizedEmail.endsWith('@vakyapress.com')) return 'writer'; 
+  
   return 'audience';
 };
 
@@ -51,7 +49,6 @@ export const getUserProfile = async (uid: string, email: string | null): Promise
     return userSnap.data() as UserProfile;
   } else {
     // Create new profile
-    // Note: Since we are creating the profile now, we check the email to see if they should be admin/writer
     const role = email ? determineRoleFromEmail(email) : 'audience';
     const newProfile: UserProfile = {
       uid,
@@ -83,40 +80,110 @@ export const signOutUser = async () => {
   await firebaseSignOut(auth);
 };
 
-// --- Data Services ---
+// --- Data Services (Articles) ---
 
-// Mock Service for UI Demo (retained for functionality until Firestore is populated)
 export const getArticles = async (): Promise<Article[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCK_ARTICLES), 500);
-  });
+  try {
+    const querySnapshot = await getDocs(collection(db, "articles"));
+    const articles: Article[] = [];
+    querySnapshot.forEach((doc) => {
+      articles.push({ id: doc.id, ...doc.data() } as Article);
+    });
+    return articles;
+  } catch (error) {
+    console.error("Error getting articles: ", error);
+    return [];
+  }
 };
 
 export const getArticleById = async (id: string): Promise<Article | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCK_ARTICLES.find(a => a.id === id)), 300);
-  });
+    try {
+        const docRef = doc(db, "articles", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Article;
+        }
+        return undefined;
+    } catch (error) {
+        console.error("Error getting article: ", error);
+        return undefined;
+    }
+};
+
+export const saveArticle = async (article: Article, isNew: boolean): Promise<void> => {
+    try {
+        if (isNew) {
+            // Remove ID for addDoc to generate one, or use setDoc with custom ID
+            // Here we use the passed ID if it's meant to be custom, otherwise addDoc
+            const { id, ...data } = article;
+            await addDoc(collection(db, "articles"), data);
+        } else {
+             const { id, ...data } = article;
+             const docRef = doc(db, "articles", id);
+             await updateDoc(docRef, data as any);
+        }
+    } catch (error) {
+        console.error("Error saving article: ", error);
+        throw error;
+    }
+};
+
+export const deleteArticle = async (id: string): Promise<void> => {
+    try {
+        await deleteDoc(doc(db, "articles", id));
+    } catch (error) {
+        console.error("Error deleting article: ", error);
+        throw error;
+    }
 };
 
 export const getRelatedArticles = async (currentArticleId: string, category: string): Promise<Article[]> => {
-  // In a real app, this would be a Firestore query
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const related = MOCK_ARTICLES
+    // Basic client-side filtering for now as Firestore inequality filtering requires indexes
+    const allArticles = await getArticles();
+    return allArticles
         .filter(a => a.category === category && a.id !== currentArticleId)
         .slice(0, 3);
+};
 
-      // If not enough related by category, just fill with others for demo
-      if (related.length < 3) {
-        const others = MOCK_ARTICLES
-          .filter(a => a.id !== currentArticleId && a.category !== category)
-          .slice(0, 3 - related.length);
-        resolve([...related, ...others]);
-      } else {
-        resolve(related);
-      }
-    }, 300);
-  });
+// --- Data Services (Products) ---
+
+export const getProducts = async (): Promise<Product[]> => {
+    try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const products: Product[] = [];
+        querySnapshot.forEach((doc) => {
+            products.push({ id: doc.id, ...doc.data() } as Product);
+        });
+        return products;
+    } catch (error) {
+        console.error("Error getting products: ", error);
+        return [];
+    }
+};
+
+export const saveProduct = async (product: Product, isNew: boolean): Promise<void> => {
+     try {
+        if (isNew) {
+            const { id, ...data } = product;
+            await addDoc(collection(db, "products"), data);
+        } else {
+             const { id, ...data } = product;
+             const docRef = doc(db, "products", id);
+             await updateDoc(docRef, data as any);
+        }
+    } catch (error) {
+        console.error("Error saving product: ", error);
+        throw error;
+    }
+};
+
+export const deleteProduct = async (id: string): Promise<void> => {
+    try {
+        await deleteDoc(doc(db, "products", id));
+    } catch (error) {
+        console.error("Error deleting product: ", error);
+        throw error;
+    }
 };
 
 // --- Site Content Management ---

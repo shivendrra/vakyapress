@@ -10,11 +10,13 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start mb-12 border-b border-gray-800 pb-8">
           <div className="mb-8 md:mb-0">
             <Link to="/" className="cursor-pointer block mb-6">
-              <img
-                src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo2.png"
-                alt="Vakya"
-                className="h-16 w-auto"
-              />
+              <div className="w-32 h-32 relative">
+                <img
+                  src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo2.png"
+                  alt="Vakya"
+                  className="w-29 h-29 object-contain"
+                />
+              </div>
             </Link>
             {/* <p className="font-sans text-sm text-gray-400 max-w-xs leading-relaxed">
               A modern, simple journalism website focused on storytelling and public good. Unfiltered, unbiased, and unapologetic.

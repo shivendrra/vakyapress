@@ -23,23 +23,24 @@ service cloud.firestore {
     }
 
     // Site Content (Videos, Static Pages, Jobs)
-    // - Public Read
-    // - Admin Write
     match /site_settings/content {
       allow read: if true;
       allow write: if isAdmin();
     }
 
     // Articles
-    // - Public Read
-    // - Writer/Admin Write
     match /articles/{articleId} {
       allow read: if true;
       allow write: if isWriter();
     }
 
+    // Products (Store)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Users
-    // - Owner Read/Write (for profile management)
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
     }

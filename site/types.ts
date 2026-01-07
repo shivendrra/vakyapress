@@ -37,6 +37,8 @@ export interface Product {
   price: number;
   image: string;
   category: string;
+  description: string;
+  stock: number;
 }
 
 // New Types for Content Management

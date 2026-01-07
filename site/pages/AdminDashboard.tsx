@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { MOCK_ARTICLES } from '../services/mockData';
-import { SiteContent, Video, PageContent, JobPosting } from '../types';
-import { saveSiteContent } from '../services/firebase';
-import { GoogleGenAI } from "@google/genai";
+import React, { useState, useEffect } from 'react';
+import { SiteContent, Video, PageContent, JobPosting, Article, Product } from '../types';
+import { saveSiteContent, getArticles, saveArticle, deleteArticle, getProducts, saveProduct, deleteProduct } from '../services/firebase';
+import { GoogleGenAI, Type } from "@google/genai";
 
 interface AdminDashboardProps {
     siteContent: SiteContent;
@@ -10,34 +9,130 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteContent }) => {
-    const [activeTab, setActiveTab] = useState<'articles' | 'writers' | 'lander' | 'pages' | 'careers'>('articles');
+    const [activeTab, setActiveTab] = useState<'articles' | 'store' | 'writers' | 'lander' | 'pages' | 'careers'>('articles');
     const [editingPage, setEditingPage] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
     const [fetchingVideoId, setFetchingVideoId] = useState<number | null>(null);
 
+    // Article State
+    const [articles, setArticles] = useState<Article[]>([]);
+    const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+
+    // Product State
+    const [products, setProducts] = useState<Product[]>([]);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        const a = await getArticles();
+        setArticles(a);
+        const p = await getProducts();
+        setProducts(p);
+    };
+
     // -- Handlers --
 
-    // Save to Database
+    // General Save for Site Content (Landing, Pages, Careers)
     const persistChanges = async () => {
         setIsSaving(true);
         setSaveMessage(null);
         try {
             await saveSiteContent(siteContent);
-            setSaveMessage({ text: "Changes saved successfully.", type: 'success' });
+            setSaveMessage({ text: "Site content saved successfully.", type: 'success' });
             setTimeout(() => setSaveMessage(null), 3000);
         } catch (error: any) {
             console.error(error);
-            if (error.code === 'permission-denied') {
-                setSaveMessage({ text: "Permission denied. Admin access required.", type: 'error' });
-            } else {
-                setSaveMessage({ text: "Error saving content.", type: 'error' });
-            }
+            setSaveMessage({ text: "Error saving content.", type: 'error' });
         } finally {
             setIsSaving(false);
         }
     };
 
+    // --- ARTICLE HANDLERS ---
+    const handleSaveArticle = async () => {
+        if (!editingArticle) return;
+        setIsSaving(true);
+        try {
+            const isNew = !articles.find(a => a.id === editingArticle.id);
+            await saveArticle(editingArticle, isNew);
+            setEditingArticle(null);
+            await loadData();
+            setSaveMessage({ text: "Article saved.", type: 'success' });
+        } catch (e) {
+            setSaveMessage({ text: "Error saving article.", type: 'error' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteArticle = async (id: string) => {
+        if (!window.confirm("Are you sure you want to delete this article?")) return;
+        try {
+            await deleteArticle(id);
+            await loadData();
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const createNewArticle = () => {
+        setEditingArticle({
+            id: Date.now().toString(),
+            title: "",
+            excerpt: "",
+            content: "",
+            author: "Admin",
+            category: "General",
+            imageUrl: "https://picsum.photos/800/600",
+            publishedAt: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            featured: false
+        });
+    };
+
+    // --- PRODUCT HANDLERS ---
+    const handleSaveProduct = async () => {
+        if (!editingProduct) return;
+        setIsSaving(true);
+        try {
+             const isNew = !products.find(p => p.id === editingProduct.id);
+             await saveProduct(editingProduct, isNew);
+             setEditingProduct(null);
+             await loadData();
+             setSaveMessage({ text: "Product saved.", type: 'success' });
+        } catch (e) {
+            setSaveMessage({ text: "Error saving product.", type: 'error' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteProduct = async (id: string) => {
+        if(!window.confirm("Delete this product?")) return;
+        try {
+            await deleteProduct(id);
+            await loadData();
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const createNewProduct = () => {
+        setEditingProduct({
+            id: Date.now().toString(),
+            name: "",
+            price: 0,
+            image: "https://picsum.photos/400/500",
+            category: "Apparel",
+            description: "",
+            stock: 10
+        });
+    };
+
+    // --- VIDEO HANDLERS ---
     // Helper to extract YouTube ID
     const getYoutubeId = (url: string) => {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -45,7 +140,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
         return (match && match[2].length === 11) ? match[2] : null;
     };
 
-    // Auto-fetch video details using Gemini
     const autoFetchVideoDetails = async (id: number, url: string) => {
         if (!url || !getYoutubeId(url)) return;
         
@@ -53,16 +147,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
         try {
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
-            const prompt = `Analyze this YouTube URL: ${url}. 
-            Return a JSON object with two keys: "title" (the exact video title) and "duration" (video duration in MM:SS or HH:MM:SS format). 
-            Do not include any other text in the response, just the JSON.`;
-            
+            // Using responseSchema for strict JSON output ensuring we get exactly what we need
             const response = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
-                contents: prompt,
+                contents: `Fetch the official title and duration of this YouTube video: ${url}. The duration should be formatted nicely (e.g. 10:25).`,
                 config: {
+                    tools: [{ googleSearch: {} }],
                     responseMimeType: 'application/json',
-                    tools: [{ googleSearch: {} }]
+                    responseSchema: {
+                        type: Type.OBJECT,
+                        properties: {
+                            title: { type: Type.STRING },
+                            duration: { type: Type.STRING }
+                        },
+                        required: ['title', 'duration']
+                    }
                 }
             });
             
@@ -71,23 +170,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                 const data = JSON.parse(text);
                 setSiteContent(prev => ({
                     ...prev,
-                    videos: prev.videos.map(v => {
-                        if (v.id === id) {
-                            return {
-                                ...v,
-                                title: data.title || v.title,
-                                duration: data.duration || v.duration
-                            };
-                        }
-                        return v;
-                    })
+                    videos: prev.videos.map(v => v.id === id ? { 
+                        ...v, 
+                        title: data.title || v.title, 
+                        duration: data.duration || v.duration 
+                    } : v)
                 }));
             }
-        } catch (error) {
-            console.error("AI fetch failed:", error);
-        } finally {
-            setFetchingVideoId(null);
-        }
+        } catch (error) { 
+            console.error("AI fetch failed:", error); 
+        } 
+        finally { setFetchingVideoId(null); }
     };
 
     const handleVideoChange = (id: number, field: keyof Video, value: string) => {
@@ -95,30 +188,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
             ...prev,
             videos: prev.videos.map(v => {
                 if (v.id !== id) return v;
-                
                 const updatedVideo = { ...v, [field]: value };
                 
-                // If URL changed, auto-update thumbnail
+                // Automatically update thumbnail when URL changes
                 if (field === 'url') {
                     const ytId = getYoutubeId(value);
-                    if (ytId) {
-                        updatedVideo.thumbnail = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
-                    }
+                    if (ytId) updatedVideo.thumbnail = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
                 }
                 return updatedVideo;
             })
         }));
     };
 
+    // --- OTHER HANDLERS ---
     const handlePageContentChange = (slug: string, field: keyof PageContent, value: string) => {
         setSiteContent(prev => ({
             ...prev,
             pages: {
                 ...prev.pages,
-                [slug]: {
-                    ...prev.pages[slug],
-                    [field]: value
-                }
+                [slug]: { ...prev.pages[slug], [field]: value }
             }
         }));
     };
@@ -134,17 +222,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
         const newJob: JobPosting = {
             id: Date.now().toString(),
             title: "New Position",
-            shortDescription: "Short summary...",
-            longDescription: "Detailed description...",
-            skills: "Skills...",
+            shortDescription: "",
+            longDescription: "",
+            skills: "",
             location: "Remote",
             type: "Full-time"
         };
         setSiteContent(prev => ({ ...prev, jobs: [...prev.jobs, newJob] }));
-    };
-
-    const deleteJob = (id: string) => {
-        setSiteContent(prev => ({ ...prev, jobs: prev.jobs.filter(j => j.id !== id) }));
     };
 
     const pageLabels: Record<string, string> = {
@@ -161,6 +245,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
 
     const TAB_LABELS: Record<string, string> = {
         'articles': 'Editorial',
+        'store': 'Store',
         'writers': 'Staff',
         'lander': 'Front Page',
         'pages': 'Static Pages',
@@ -184,16 +269,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                     )}
                 </header>
 
-                {/* Navigation Tabs */}
                 <div className="flex gap-8 mb-12 border-b border-gray-300 overflow-x-auto pb-1">
                     {Object.keys(TAB_LABELS).map(tab => (
                         <button
                             key={tab}
-                            onClick={() => { setActiveTab(tab as any); setSaveMessage(null); }}
+                            onClick={() => { setActiveTab(tab as any); setSaveMessage(null); setEditingArticle(null); setEditingProduct(null); }}
                             className={`pb-3 font-sans font-bold uppercase tracking-widest text-xs transition-all whitespace-nowrap ${
-                                activeTab === tab 
-                                ? 'border-b-4 border-black text-black' 
-                                : 'border-b-4 border-transparent text-gray-400 hover:text-gray-600'
+                                activeTab === tab ? 'border-b-4 border-black text-black' : 'border-b-4 border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                         >
                             {TAB_LABELS[tab]}
@@ -201,149 +283,204 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                     ))}
                 </div>
 
-                {/* Content Container */}
                 <div className="min-h-[600px] animate-fade-in">
                     
                     {/* --- ARTICLES TAB --- */}
                     {activeTab === 'articles' && (
                         <div>
-                            <div className="flex justify-between mb-8 items-center">
-                                <h2 className="font-serif text-3xl">Manage Articles</h2>
-                                <button className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-gray-800 transition-colors">
-                                    + New Article
-                                </button>
-                            </div>
-                            <div className="bg-white border border-gray-200 overflow-hidden">
-                                <table className="w-full text-left border-collapse">
-                                    <thead className="bg-gray-50 border-b border-gray-200">
-                                        <tr>
-                                            <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Title</th>
-                                            <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Author</th>
-                                            <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Date</th>
-                                            <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Status</th>
-                                            <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                        {MOCK_ARTICLES.map(article => (
-                                            <tr key={article.id} className="hover:bg-gray-50 transition-colors group">
-                                                <td className="p-4 font-serif text-xl">{article.title}</td>
-                                                <td className="p-4 font-sans text-sm text-gray-600">{article.author}</td>
-                                                <td className="p-4 font-sans text-sm text-gray-500">{article.publishedAt}</td>
-                                                <td className="p-4">
-                                                    <span className="bg-green-100 text-green-800 px-2 py-1 text-[10px] font-bold uppercase tracking-widest border border-green-200">Published</span>
-                                                </td>
-                                                <td className="p-4 text-right">
-                                                    <button className="text-black font-bold text-xs uppercase hover:text-vakya-salmon mr-4 transition-colors">Edit</button>
-                                                    <button className="text-gray-400 font-bold text-xs uppercase hover:text-red-600 transition-colors">Delete</button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                            {!editingArticle ? (
+                                <>
+                                    <div className="flex justify-between mb-8 items-center">
+                                        <h2 className="font-serif text-3xl">Manage Articles</h2>
+                                        <button onClick={createNewArticle} className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-gray-800 transition-colors">
+                                            + New Article
+                                        </button>
+                                    </div>
+                                    <div className="bg-white border border-gray-200 overflow-hidden">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead className="bg-gray-50 border-b border-gray-200">
+                                                <tr>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Title</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Author</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Date</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {articles.map(article => (
+                                                    <tr key={article.id} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="p-4 font-serif text-xl">{article.title}</td>
+                                                        <td className="p-4 font-sans text-sm text-gray-600">{article.author}</td>
+                                                        <td className="p-4 font-sans text-sm text-gray-500">{article.publishedAt}</td>
+                                                        <td className="p-4 text-right">
+                                                            <button onClick={() => setEditingArticle(article)} className="text-black font-bold text-xs uppercase hover:text-vakya-salmon mr-4 transition-colors">Edit</button>
+                                                            <button onClick={() => handleDeleteArticle(article.id)} className="text-gray-400 font-bold text-xs uppercase hover:text-red-600 transition-colors">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="bg-white border border-gray-200 p-8">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="font-serif text-3xl">Editor</h2>
+                                        <div className="flex gap-4">
+                                            <button onClick={() => setEditingArticle(null)} className="text-gray-500 font-bold text-xs uppercase hover:text-black">Cancel</button>
+                                            <button onClick={handleSaveArticle} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold text-xs uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors">
+                                                {isSaving ? 'Saving...' : 'Save Article'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="col-span-2">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Title</label>
+                                            <input className="w-full p-3 border border-gray-300 font-serif text-2xl bg-white text-black" value={editingArticle.title} onChange={e => setEditingArticle({...editingArticle, title: e.target.value})} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category</label>
+                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.category} onChange={e => setEditingArticle({...editingArticle, category: e.target.value})} />
+                                        </div>
+                                         <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>
+                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.imageUrl} onChange={e => setEditingArticle({...editingArticle, imageUrl: e.target.value})} />
+                                        </div>
+                                         <div className="col-span-2">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Excerpt (Subtitle)</label>
+                                            <textarea rows={2} className="w-full p-3 border border-gray-300 font-serif bg-white text-black" value={editingArticle.excerpt} onChange={e => setEditingArticle({...editingArticle, excerpt: e.target.value})} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Content (Markdown supported)</label>
+                                            <textarea rows={15} className="w-full p-3 border border-gray-300 font-mono text-sm bg-white text-black" value={editingArticle.content} onChange={e => setEditingArticle({...editingArticle, content: e.target.value})} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
-                    {/* --- WRITERS TAB --- */}
-                    {activeTab === 'writers' && (
+                    {/* --- STORE TAB --- */}
+                    {activeTab === 'store' && (
                         <div>
-                            <h2 className="font-serif text-3xl mb-8">Staff Directory</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {['Pradyumn', 'Aakash'].map((name, i) => (
-                                    <div key={name} className="p-8 bg-white border border-gray-200 flex items-center gap-6 hover:border-black transition-colors group">
-                                        <div className="w-16 h-16 bg-vakya-gray text-vakya-black border border-black rounded-full flex items-center justify-center font-serif text-2xl group-hover:bg-vakya-accent transition-colors">{name[0]}</div>
-                                        <div>
-                                            <h3 className="font-serif text-2xl">{name}</h3>
-                                            <p className="text-sm font-sans text-gray-500 mb-2">{name.toLowerCase()}@vakyapress.com</p>
-                                            <span className="bg-gray-100 text-gray-600 px-2 py-1 text-[10px] font-bold uppercase tracking-widest border border-gray-200">{i === 0 ? 'Admin' : 'Writer'}</span>
-                                        </div>
-                                        <button className="ml-auto text-xs font-bold uppercase border-b border-black pb-1 hover:text-vakya-salmon hover:border-vakya-salmon transition-colors">Manage</button>
+                             {!editingProduct ? (
+                                <>
+                                    <div className="flex justify-between mb-8 items-center">
+                                        <h2 className="font-serif text-3xl">Manage Store</h2>
+                                        <button onClick={createNewProduct} className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-gray-800 transition-colors">
+                                            + New Product
+                                        </button>
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="bg-white border border-gray-200 overflow-hidden">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead className="bg-gray-50 border-b border-gray-200">
+                                                <tr>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Product</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Category</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Price</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Stock</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {products.map(product => (
+                                                    <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="p-4 flex items-center gap-4">
+                                                            <img src={product.image} className="w-10 h-10 object-cover border border-gray-200" alt="prod" />
+                                                            <span className="font-serif text-lg">{product.name}</span>
+                                                        </td>
+                                                        <td className="p-4 font-sans text-sm text-gray-600">{product.category}</td>
+                                                        <td className="p-4 font-sans text-sm font-bold">${product.price}</td>
+                                                        <td className="p-4 font-sans text-sm">{product.stock}</td>
+                                                        <td className="p-4 text-right">
+                                                            <button onClick={() => setEditingProduct(product)} className="text-black font-bold text-xs uppercase hover:text-vakya-salmon mr-4 transition-colors">Edit</button>
+                                                            <button onClick={() => handleDeleteProduct(product.id)} className="text-gray-400 font-bold text-xs uppercase hover:text-red-600 transition-colors">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                             ) : (
+                                 <div className="bg-white border border-gray-200 p-8">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="font-serif text-3xl">Product Editor</h2>
+                                        <div className="flex gap-4">
+                                            <button onClick={() => setEditingProduct(null)} className="text-gray-500 font-bold text-xs uppercase hover:text-black">Cancel</button>
+                                            <button onClick={handleSaveProduct} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold text-xs uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors">
+                                                {isSaving ? 'Saving...' : 'Save Product'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="col-span-2 md:col-span-1">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Product Name</label>
+                                            <input className="w-full p-3 border border-gray-300 font-serif text-xl bg-white text-black" value={editingProduct.name} onChange={e => setEditingProduct({...editingProduct, name: e.target.value})} />
+                                        </div>
+                                         <div className="col-span-2 md:col-span-1">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>
+                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingProduct.image} onChange={e => setEditingProduct({...editingProduct, image: e.target.value})} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Price ($)</label>
+                                            <input type="number" className="w-full p-3 border border-gray-300 bg-white text-black" value={editingProduct.price} onChange={e => setEditingProduct({...editingProduct, price: Number(e.target.value)})} />
+                                        </div>
+                                         <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Stock Qty</label>
+                                            <input type="number" className="w-full p-3 border border-gray-300 bg-white text-black" value={editingProduct.stock} onChange={e => setEditingProduct({...editingProduct, stock: Number(e.target.value)})} />
+                                        </div>
+                                        <div className="col-span-2">
+                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category</label>
+                                             <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingProduct.category} onChange={e => setEditingProduct({...editingProduct, category: e.target.value})} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Description</label>
+                                            <textarea rows={5} className="w-full p-3 border border-gray-300 font-sans bg-white text-black" value={editingProduct.description} onChange={e => setEditingProduct({...editingProduct, description: e.target.value})} />
+                                        </div>
+                                    </div>
+                                 </div>
+                             )}
                         </div>
                     )}
-                    
+
                     {/* --- LANDER TAB (VIDEOS) --- */}
                     {activeTab === 'lander' && (
                         <div>
                             <div className="flex justify-between items-center mb-8">
-                                <div>
-                                    <h2 className="font-serif text-3xl">Front Page Media</h2>
-                                    <p className="font-sans text-sm text-gray-500 mt-1">Manage the featured videos on the landing page.</p>
-                                </div>
-                                <button 
-                                    onClick={persistChanges} 
-                                    disabled={isSaving}
-                                    className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50"
-                                >
+                                <h2 className="font-serif text-3xl">Front Page Media</h2>
+                                <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50">
                                     {isSaving ? 'Saving...' : 'Save All Changes'}
                                 </button>
                             </div>
-                            
                             <div className="space-y-8">
                                 {siteContent.videos.map((video, idx) => (
-                                    <div key={video.id} className="bg-white p-6 border border-gray-200 hover:border-black transition-colors">
+                                    <div key={video.id} className="bg-white p-6 border border-gray-200">
                                         <div className="flex items-center gap-2 mb-4">
                                             <span className="bg-vakya-black text-white w-6 h-6 flex items-center justify-center font-mono text-xs rounded-full">{idx + 1}</span>
                                             <span className="font-sans text-xs font-bold uppercase text-gray-400 tracking-widest">Video Slot</span>
                                         </div>
-                                        
                                         <div className="grid md:grid-cols-12 gap-8">
-                                            {/* Thumbnail Preview */}
                                             <div className="md:col-span-4 aspect-video bg-black relative group overflow-hidden border border-gray-100">
                                                 <img src={video.thumbnail} alt="preview" className="w-full h-full object-cover opacity-90" />
-                                                {fetchingVideoId === video.id && (
-                                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm z-10">
-                                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
-                                                    </div>
-                                                )}
-                                                <div className="absolute bottom-2 right-2 bg-black text-white text-[10px] px-2 py-1 font-sans font-bold">
-                                                    {video.duration}
-                                                </div>
+                                                {fetchingVideoId === video.id && <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm z-10"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div></div>}
                                             </div>
-                                            
-                                            {/* Edit Fields */}
                                             <div className="md:col-span-8 grid grid-cols-2 gap-6">
                                                 <div className="col-span-2">
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">YouTube URL</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={video.url} 
-                                                        onChange={(e) => handleVideoChange(video.id, 'url', e.target.value)}
-                                                        onBlur={(e) => autoFetchVideoDetails(video.id, e.target.value)}
-                                                        placeholder="https://www.youtube.com/watch?v=..."
-                                                        className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    />
-                                                    <p className="text-[10px] text-gray-400 mt-2 italic">Paste a YouTube link and click away to auto-fetch title & duration.</p>
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">YouTube URL</label>
+                                                    <input type="text" value={video.url} onChange={(e) => handleVideoChange(video.id, 'url', e.target.value)} onBlur={(e) => autoFetchVideoDetails(video.id, e.target.value)} className="w-full p-3 border border-gray-300 bg-white text-black" />
                                                 </div>
                                                 <div className="col-span-2">
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Headline</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={video.title} 
-                                                        onChange={(e) => handleVideoChange(video.id, 'title', e.target.value)}
-                                                        className="w-full p-3 border border-gray-300 font-serif text-xl focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    />
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Headline</label>
+                                                    <input type="text" value={video.title} onChange={(e) => handleVideoChange(video.id, 'title', e.target.value)} className="w-full p-3 border border-gray-300 bg-white text-black font-serif text-xl" />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Duration</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={video.duration} 
-                                                        onChange={(e) => handleVideoChange(video.id, 'duration', e.target.value)}
-                                                        className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    />
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Duration</label>
+                                                    <input type="text" value={video.duration} onChange={(e) => handleVideoChange(video.id, 'duration', e.target.value)} className="w-full p-3 border border-gray-300 bg-white text-black" />
                                                 </div>
                                                  <div>
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Category</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={video.type} 
-                                                        onChange={(e) => handleVideoChange(video.id, 'type', e.target.value)}
-                                                        className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    />
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category</label>
+                                                    <input type="text" value={video.type} onChange={(e) => handleVideoChange(video.id, 'type', e.target.value)} className="w-full p-3 border border-gray-300 bg-white text-black" />
                                                 </div>
                                             </div>
                                         </div>
@@ -355,62 +492,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
 
                     {/* --- STATIC PAGES TAB --- */}
                     {activeTab === 'pages' && (
-                        <div className="grid md:grid-cols-4 gap-8">
-                             {/* Sidebar Select */}
+                         <div className="grid md:grid-cols-4 gap-8">
                              <div className="md:col-span-1 bg-white border border-gray-200 p-2 h-fit">
                                  {Object.keys(pageLabels).map(slug => (
-                                     <button 
-                                        key={slug}
-                                        onClick={() => setEditingPage(slug)}
-                                        className={`block w-full text-left px-4 py-3 font-sans text-xs font-bold uppercase tracking-widest transition-colors mb-1 ${
-                                            editingPage === slug 
-                                            ? 'bg-vakya-black text-white' 
-                                            : 'text-gray-500 hover:bg-gray-100 hover:text-black'
-                                        }`}
-                                     >
-                                         {pageLabels[slug]}
-                                     </button>
+                                     <button key={slug} onClick={() => setEditingPage(slug)} className={`block w-full text-left px-4 py-3 font-sans text-xs font-bold uppercase tracking-widest transition-colors mb-1 ${editingPage === slug ? 'bg-vakya-black text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-black'}`}>{pageLabels[slug]}</button>
                                  ))}
                              </div>
-
-                             {/* Editor Area */}
                              <div className="md:col-span-3">
-                                 {editingPage && siteContent.pages[editingPage] ? (
-                                     <div className="bg-white border border-gray-200 p-8 animate-fade-in">
+                                 {editingPage && siteContent.pages?.[editingPage] ? (
+                                     <div className="bg-white border border-gray-200 p-8">
                                          <div className="mb-6">
-                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Page Title</label>
-                                             <input 
-                                                type="text" 
-                                                value={siteContent.pages[editingPage].title}
-                                                onChange={(e) => handlePageContentChange(editingPage, 'title', e.target.value)}
-                                                className="w-full p-4 border border-gray-300 font-serif text-3xl focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                             />
+                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Page Title</label>
+                                             <input type="text" value={siteContent.pages[editingPage].title} onChange={(e) => handlePageContentChange(editingPage, 'title', e.target.value)} className="w-full p-4 border border-gray-300 font-serif text-3xl bg-white text-black" />
                                          </div>
                                          <div>
-                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Content (Markdown)</label>
-                                             <textarea 
-                                                rows={20}
-                                                value={siteContent.pages[editingPage].content}
-                                                onChange={(e) => handlePageContentChange(editingPage, 'content', e.target.value)}
-                                                className="w-full p-4 border border-gray-300 font-mono text-sm leading-relaxed focus:border-black focus:outline-none resize-y bg-gray-50 text-gray-900 transition-colors"
-                                             ></textarea>
+                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Content (Markdown)</label>
+                                             <textarea rows={20} value={siteContent.pages[editingPage].content} onChange={(e) => handlePageContentChange(editingPage, 'content', e.target.value)} className="w-full p-4 border border-gray-300 font-mono text-sm leading-relaxed bg-white text-black" />
                                          </div>
                                          <div className="mt-6 flex justify-end">
-                                             <button 
-                                                onClick={persistChanges}
-                                                disabled={isSaving}
-                                                className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest text-xs hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50"
-                                             >
-                                                 {isSaving ? 'Saving...' : 'Save Changes'}
-                                             </button>
+                                             <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest text-xs hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
                                          </div>
                                      </div>
-                                 ) : (
-                                     <div className="h-full min-h-[400px] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">
-                                         <svg className="w-12 h-12 mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                         <span className="font-serif text-xl">Select a page to edit content.</span>
-                                     </div>
-                                 )}
+                                 ) : <div className="h-full min-h-[400px] flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400">Select a page.</div>}
                              </div>
                         </div>
                     )}
@@ -421,80 +524,34 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                              <div className="flex justify-between mb-8 items-center">
                                 <h2 className="font-serif text-3xl">Open Positions</h2>
                                 <div className="flex gap-4">
-                                    <button 
-                                        onClick={persistChanges}
-                                        disabled={isSaving}
-                                        className="bg-vakya-black text-white px-6 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50"
-                                    >
-                                        {isSaving ? 'Saving...' : 'Save All'}
-                                    </button>
-                                    <button onClick={addNewJob} className="border border-black text-black px-6 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-gray-100 transition-colors">
-                                        + Post Job
-                                    </button>
+                                    <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-6 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors disabled:opacity-50">{isSaving ? 'Saving...' : 'Save All'}</button>
+                                    <button onClick={addNewJob} className="border border-black text-black px-6 py-3 font-sans font-bold uppercase text-xs tracking-widest hover:bg-gray-100 transition-colors">+ Post Job</button>
                                 </div>
                             </div>
-
                             <div className="space-y-6">
                                 {siteContent.jobs.map(job => (
                                     <div key={job.id} className="bg-white border border-gray-200 p-8 relative hover:border-black transition-colors">
-                                         <button onClick={() => deleteJob(job.id)} className="absolute top-8 right-8 text-gray-400 hover:text-red-600 font-bold text-xs uppercase tracking-widest transition-colors">Remove</button>
-                                         
+                                         <button onClick={() => setSiteContent(prev => ({...prev, jobs: prev.jobs.filter(j => j.id !== job.id)}))} className="absolute top-8 right-8 text-gray-400 hover:text-red-600 font-bold text-xs uppercase tracking-widest">Remove</button>
                                          <div className="grid grid-cols-2 gap-6">
                                              <div className="col-span-2 md:col-span-1">
-                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Job Title</label>
-                                                 <input 
-                                                    value={job.title}
-                                                    onChange={(e) => handleJobChange(job.id, 'title', e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 font-serif text-xl focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                 />
+                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Job Title</label>
+                                                 <input value={job.title} onChange={(e) => handleJobChange(job.id, 'title', e.target.value)} className="w-full p-3 border border-gray-300 font-serif text-xl bg-white text-black" />
                                              </div>
                                              <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Type</label>
-                                                    <select 
-                                                        value={job.type}
-                                                        onChange={(e) => handleJobChange(job.id, 'type', e.target.value as any)}
-                                                        className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    >
-                                                        <option>Full-time</option>
-                                                        <option>Part-time</option>
-                                                        <option>Contract</option>
-                                                        <option>Remote</option>
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Type</label>
+                                                    <select value={job.type} onChange={(e) => handleJobChange(job.id, 'type', e.target.value as any)} className="w-full p-3 border border-gray-300 text-sm bg-white text-black">
+                                                        <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option>
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Location</label>
-                                                    <input 
-                                                        value={job.location}
-                                                        onChange={(e) => handleJobChange(job.id, 'location', e.target.value)}
-                                                        className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                    />
+                                                    <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Location</label>
+                                                    <input value={job.location} onChange={(e) => handleJobChange(job.id, 'location', e.target.value)} className="w-full p-3 border border-gray-300 text-sm bg-white text-black" />
                                                 </div>
                                              </div>
                                              <div className="col-span-2">
-                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Skills (comma separated)</label>
-                                                 <input 
-                                                    value={job.skills}
-                                                    onChange={(e) => handleJobChange(job.id, 'skills', e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                 />
-                                             </div>
-                                              <div className="col-span-2">
-                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Short Description</label>
-                                                 <input 
-                                                    value={job.shortDescription}
-                                                    onChange={(e) => handleJobChange(job.id, 'shortDescription', e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 font-sans text-sm focus:border-black focus:outline-none bg-white text-gray-900 transition-colors"
-                                                 />
-                                             </div>
-                                              <div className="col-span-2">
-                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Long Description (Markdown)</label>
-                                                 <textarea 
-                                                    rows={6}
-                                                    value={job.longDescription}
-                                                    onChange={(e) => handleJobChange(job.id, 'longDescription', e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 font-mono text-sm focus:border-black focus:outline-none bg-gray-50 text-gray-900 transition-colors"
-                                                 />
+                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Description (Markdown)</label>
+                                                 <textarea rows={6} value={job.longDescription} onChange={(e) => handleJobChange(job.id, 'longDescription', e.target.value)} className="w-full p-3 border border-gray-300 font-mono text-sm bg-white text-black" />
                                              </div>
                                          </div>
                                     </div>
@@ -502,7 +559,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                             </div>
                         </div>
                     )}
-
                 </div>
             </div>
         </div>
