@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Article } from '../types';
 import { getRelatedArticles, getArticleById } from '../services/firebase';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 const ArticleDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,9 +43,9 @@ const ArticleDetail: React.FC = () => {
 
   const getFontSizeClass = () => {
       switch(fontSize) {
-          case 'small': return 'prose-sm';
-          case 'large': return 'prose-xl';
-          default: return 'prose-lg';
+          case 'small': return 'text-base';
+          case 'large': return 'text-xl';
+          default: return 'text-lg';
       }
   };
 
@@ -80,17 +81,15 @@ const ArticleDetail: React.FC = () => {
               </div>
 
               {/* Reader Content */}
-              <div className="max-w-2xl mx-auto pt-32 pb-24 px-6 animate-fade-in-up">
+              <div className={`max-w-3xl mx-auto pt-32 pb-24 px-6 animate-fade-in-up ${getFontSizeClass()}`}>
                   <h1 className="font-serif text-5xl mb-8 leading-tight">{article.title}</h1>
                   <p className="font-sans text-sm opacity-60 mb-12 uppercase tracking-widest">By {article.author} • {article.publishedAt}</p>
                   
-                  <div className={`prose max-w-none ${getFontSizeClass()} ${theme === 'dark' ? 'prose-invert' : ''}`}>
+                  <div className={`${theme === 'dark' ? '[&_blockquote]:bg-white/10 [&_pre]:bg-white/10 [&_code]:bg-white/10 [&_code]:text-white' : ''}`}>
                       <p className="font-serif italic text-xl mb-8 opacity-80 border-l-4 pl-4 border-current">
                           {article.subtitle || article.excerpt}
                       </p>
-                       <div className="whitespace-pre-wrap font-serif leading-relaxed">
-                           {article.content}
-                       </div>
+                       <MarkdownRenderer content={article.content} />
                   </div>
               </div>
           </div>
@@ -116,7 +115,7 @@ const ArticleDetail: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 bg-white pt-10 rounded-t-lg">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 bg-white pt-10 rounded-t-lg shadow-sm">
         {/* Meta & Actions */}
         <div className="flex items-center justify-between border-b border-gray-100 pb-8 mb-8">
            <div className="flex items-center gap-4">
@@ -140,14 +139,12 @@ const ArticleDetail: React.FC = () => {
         </div>
 
         {/* Content Body */}
-        <div className="prose prose-lg prose-headings:font-serif prose-p:font-sans prose-a:text-vakya-salmon hover:prose-a:text-red-500 max-w-none text-gray-800">
-          <p className="lead text-xl font-serif italic text-gray-600 mb-8 border-l-4 border-vakya-accent pl-4">
+        <div className="text-gray-800">
+          <p className="lead text-xl md:text-2xl font-serif italic text-gray-600 mb-8 border-l-4 border-vakya-accent pl-6 py-1 leading-relaxed">
             {article.subtitle || article.excerpt}
           </p>
           
-          <div className="whitespace-pre-wrap">
-             {article.content}
-          </div>
+          <MarkdownRenderer content={article.content} />
         </div>
         
         {/* Footer of article */}

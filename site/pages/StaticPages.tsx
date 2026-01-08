@@ -1,5 +1,6 @@
 import React from 'react';
 import { ViewState, PageContent } from '../types';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 interface StaticPageProps {
   type: ViewState;
@@ -8,24 +9,19 @@ interface StaticPageProps {
 
 const StaticPage: React.FC<StaticPageProps> = ({ type, content }) => {
   // If content is provided via props (from Admin state), render it
-  // Otherwise, fall back to "Page not found" or default structure
-  
   if (content) {
       return (
         <div className="min-h-screen bg-white py-24">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="font-serif text-5xl mb-8">{content.title}</h1>
-                <div className="prose prose-lg prose-headings:font-serif prose-a:text-vakya-salmon prose-p:font-sans font-sans text-gray-800 whitespace-pre-line">
-                    {content.content}
-                </div>
-                 <p className="mt-12 text-sm text-gray-400 font-sans italic border-t border-gray-100 pt-4">Last updated: Oct 2024 • Vakya Press LLC</p>
+                <h1 className="font-serif text-5xl mb-12 pb-8 border-b border-black">{content.title}</h1>
+                <MarkdownRenderer content={content.content} />
+                <p className="mt-16 text-sm text-gray-400 font-sans italic border-t border-gray-100 pt-6">Last updated: Oct 2024 • Vakya Press LLC</p>
             </div>
         </div>
       );
   }
 
-  // Fallback for pages not in the dynamic state list (like 'pitch' if not added to App state yet)
-  // For the purpose of this demo, we assume important pages are in App state.
+  // Fallback
   return (
     <div className="min-h-screen bg-white py-24 flex items-center justify-center">
         <div className="text-center">

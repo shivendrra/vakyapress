@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { JobPosting } from '../types';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 interface CareersProps {
     jobs: JobPosting[];
@@ -74,9 +75,7 @@ const Careers: React.FC<CareersProps> = ({ jobs }) => {
                             <div className="space-y-8">
                                 <div>
                                     <h4 className="font-sans font-bold uppercase tracking-widest text-xs text-gray-400 mb-3">About the Role</h4>
-                                    <div className="prose prose-lg font-sans text-gray-800 whitespace-pre-line">
-                                        {selectedJob.longDescription}
-                                    </div>
+                                    <MarkdownRenderer content={selectedJob.longDescription} />
                                 </div>
 
                                 <div>

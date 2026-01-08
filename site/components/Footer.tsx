@@ -12,9 +12,9 @@ const Footer: React.FC = () => {
             <Link to="/" className="cursor-pointer block mb-6">
               <div className="w-32 h-32 relative">
                 <img
-                  src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo2.png"
-                  alt="Vakya"
-                  className="w-29 h-29 object-contain"
+                    src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo2.png"
+                    alt="Vakya"
+                    className="w-29 h-29 object-contain"
                 />
               </div>
             </Link>
