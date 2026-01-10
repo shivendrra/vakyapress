@@ -17,13 +17,13 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
       <section className="relative min-h-[90vh] flex flex-col justify-center items-center text-center px-4 bg-vakya-paper">
         <div className="max-w-4xl mx-auto z-10">
           <p className="font-sans text-sm md:text-base uppercase tracking-[0.2em] mb-4 text-gray-500 animate-fade-in-up">
-            Est. 2024 — Independent Journalism
+            Est. 2023 — Independent Journalism
           </p>
           <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-tight mb-8 text-vakya-black animate-fade-in-up delay-100">
             Truth in <br/> <span className="italic text-gray-700">Motion.</span>
           </h1>
           <p className="font-sans text-lg md:text-xl max-w-2xl mx-auto text-gray-600 mb-10 leading-relaxed animate-fade-in-up delay-200">
-            We are Vakya. We bring you stories that challenge perspectives and ignite conversations. Unfiltered, unbiased, and unapologetic.
+            We are Vakya. We bring you stories that challenge perspectives and ignite conversations. Unfiltered, unbiased, and unapologetic. <em>Truth as it should be.</em>
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in-up delay-300">
             <button 
@@ -61,15 +61,15 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
             <div className="border-l-2 border-gray-200 pl-8 space-y-12">
               <div className="relative">
                 <span className="absolute -left-[41px] top-1 h-5 w-5 rounded-full bg-vakya-black border-4 border-white"></span>
-                <span className="font-sans font-bold text-gray-400 text-sm tracking-widest">2021</span>
+                <span className="font-sans font-bold text-gray-400 text-sm tracking-widest">2023</span>
                 <h3 className="font-serif text-2xl mt-1">The Inception</h3>
-                <p className="font-sans text-gray-600 mt-2">Started as a small newsletter covering local municipality issues.</p>
+                <p className="font-sans text-gray-600 mt-2">Started as a part-time youtube channel with bunch of friends determined to seek the truth.</p>
               </div>
               <div className="relative">
                  <span className="absolute -left-[41px] top-1 h-5 w-5 rounded-full bg-vakya-accent border-4 border-white"></span>
-                <span className="font-sans font-bold text-gray-400 text-sm tracking-widest">2023</span>
-                <h3 className="font-serif text-2xl mt-1">Going Digital</h3>
-                <p className="font-sans text-gray-600 mt-2">Launched the full digital platform and expanded our team of investigative journalists.</p>
+                <span className="font-sans font-bold text-gray-400 text-sm tracking-widest">2026</span>
+                <h3 className="font-serif text-2xl mt-1">Revival</h3>
+                <p className="font-sans text-gray-600 mt-2">Re-Launching with full conviction, better & bigger team and more knowledge and experience.</p>
               </div>
               <div className="relative">
                  <span className="absolute -left-[41px] top-1 h-5 w-5 rounded-full bg-gray-200 border-4 border-white"></span>
