@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vakya | Journalism for the People</title>
+  <meta name="description" content="A modern, simple journalism website focused on storytelling and public good." />
+  <meta property="og:title" content="Vakya | Journalism for the People" />
+  <meta property="og:description"
+    content="A modern, simple journalism website focused on storytelling and public good." />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo7.png" />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts: Instrument Serif and Open Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Instrument Serif"', 'serif'],
+            sans: ['"Open Sans"', 'sans-serif'],
+          },
+          colors: {
+            vakya: {
+              black: '#121212',
+              paper: '#F9F7F2',
+              gray: '#F3F4F6',
+              accent: '#FFE66D', // Pastel Yellow
+              lavender: '#E6E6FA',
+              salmon: '#FF9B85'
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'fade-in-up': 'fadeInUp 0.5s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F9F7F2;
+      color: #121212;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper to fetch the user's profile document
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Check if user has admin role
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+    
+    // Check if user has writer or admin role
+    function isWriter() {
+      return isSignedIn() && (getUserData().role == 'writer' || getUserData().role == 'admin');
+    }
+
+    // Site Content (Videos, Static Pages, Jobs)
+    match /site_settings/content {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Articles
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isWriter();
+    }
+
+    // Products (Store)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
