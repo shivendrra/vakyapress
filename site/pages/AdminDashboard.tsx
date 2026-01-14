@@ -8,6 +8,20 @@ interface AdminDashboardProps {
     setSiteContent: React.Dispatch<React.SetStateAction<SiteContent>>;
 }
 
+const ARTICLE_CATEGORIES = [
+    'Politics', 
+    'Environment', 
+    'Culture', 
+    'Technology', 
+    'Opinion',
+    'Economy',
+    'Science',
+    'Health',
+    'World',
+    'Investigation',
+    'Urbanism'
+];
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteContent }) => {
     const [activeTab, setActiveTab] = useState<'articles' | 'store' | 'writers' | 'lander' | 'pages' | 'careers'>('articles');
     const [editingPage, setEditingPage] = useState<string | null>(null);
@@ -18,6 +32,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     // Article State
     const [articles, setArticles] = useState<Article[]>([]);
     const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+    // Local state for tags input string to handle typing before converting to array
+    const [tagsInput, setTagsInput] = useState<string>("");
 
     // Product State
     const [products, setProducts] = useState<Product[]>([]);
@@ -26,6 +42,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     useEffect(() => {
         loadData();
     }, []);
+
+    // Sync tags input when editing article changes
+    useEffect(() => {
+        if (editingArticle) {
+            setTagsInput(editingArticle.tags ? editingArticle.tags.join(', ') : "");
+        }
+    }, [editingArticle]);
 
     const loadData = async () => {
         const a = await getArticles();
@@ -56,9 +79,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     const handleSaveArticle = async () => {
         if (!editingArticle) return;
         setIsSaving(true);
+        
+        // Process tags from input string before saving
+        const processedTags = tagsInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        const articleToSave = { ...editingArticle, tags: processedTags };
+
         try {
-            const isNew = !articles.find(a => a.id === editingArticle.id);
-            await saveArticle(editingArticle, isNew);
+            const isNew = !articles.find(a => a.id === articleToSave.id);
+            await saveArticle(articleToSave, isNew);
             setEditingArticle(null);
             await loadData();
             setSaveMessage({ text: "Article saved.", type: 'success' });
@@ -86,7 +114,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
             excerpt: "",
             content: "",
             author: "Admin",
-            category: "General",
+            category: "Politics", // Default
+            tags: [],
             imageUrl: "https://picsum.photos/800/600",
             publishedAt: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
             featured: false
@@ -301,7 +330,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             <thead className="bg-gray-50 border-b border-gray-200">
                                                 <tr>
                                                     <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Title</th>
-                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Author</th>
+                                                    <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Category</th>
                                                     <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider">Date</th>
                                                     <th className="p-4 font-sans text-xs font-bold uppercase text-gray-500 tracking-wider text-right">Actions</th>
                                                 </tr>
@@ -310,7 +339,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                                 {articles.map(article => (
                                                     <tr key={article.id} className="hover:bg-gray-50 transition-colors">
                                                         <td className="p-4 font-serif text-xl">{article.title}</td>
-                                                        <td className="p-4 font-sans text-sm text-gray-600">{article.author}</td>
+                                                        <td className="p-4 font-sans text-sm text-gray-600">{article.category}</td>
                                                         <td className="p-4 font-sans text-sm text-gray-500">{article.publishedAt}</td>
                                                         <td className="p-4 text-right">
                                                             <button onClick={() => setEditingArticle(article)} className="text-black font-bold text-xs uppercase hover:text-vakya-salmon mr-4 transition-colors">Edit</button>
@@ -339,12 +368,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             <input className="w-full p-3 border border-gray-300 font-serif text-2xl bg-white text-black" value={editingArticle.title} onChange={e => setEditingArticle({...editingArticle, title: e.target.value})} />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category</label>
-                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.category} onChange={e => setEditingArticle({...editingArticle, category: e.target.value})} />
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category (Domain)</label>
+                                            <select 
+                                                className="w-full p-3 border border-gray-300 bg-white text-black font-sans" 
+                                                value={editingArticle.category} 
+                                                onChange={e => setEditingArticle({...editingArticle, category: e.target.value})}
+                                            >
+                                                {ARTICLE_CATEGORIES.map(cat => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                          <div>
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>
                                             <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.imageUrl} onChange={e => setEditingArticle({...editingArticle, imageUrl: e.target.value})} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Tags (Comma Separated)</label>
+                                            <input 
+                                                className="w-full p-3 border border-gray-300 bg-white text-black font-sans" 
+                                                value={tagsInput} 
+                                                onChange={e => setTagsInput(e.target.value)}
+                                                placeholder="e.g. Climate Change, Policy, Local News"
+                                            />
                                         </div>
                                          <div className="col-span-2">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Excerpt (Subtitle)</label>

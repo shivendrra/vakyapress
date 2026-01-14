@@ -7,6 +7,7 @@ export interface Article {
   author: string;
   authorImage?: string;
   category: string;
+  tags?: string[]; // Added tags support
   imageUrl: string;
   publishedAt: string;
   featured?: boolean;
@@ -73,16 +74,16 @@ export interface SiteContent {
 }
 
 // Navigation Types
-export type ViewState = 
-  | 'landing' 
-  | 'articles' 
-  | 'article_detail' 
-  | 'store' 
-  | 'about' 
-  | 'contact' 
-  | 'auth' 
-  | 'admin_dashboard' 
-  | 'writer_profile' 
+export type ViewState =
+  | 'landing'
+  | 'articles'
+  | 'article_detail'
+  | 'store'
+  | 'about'
+  | 'contact'
+  | 'auth'
+  | 'admin_dashboard'
+  | 'writer_profile'
   | 'user_profile'
   | 'ethics'
   | 'financials'

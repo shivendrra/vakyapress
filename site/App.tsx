@@ -23,29 +23,29 @@ import { onAuthStateChanged } from 'firebase/auth';
 // Initial Default Content (Fallback)
 const INITIAL_CONTENT: SiteContent = {
   videos: [
-    {
-      id: 1,
-      title: "The Cost of Fast Fashion in Rural India",
-      url: "https://www.youtube.com/watch?v=BiLYO8n9h4A",
-      thumbnail: "https://img.youtube.com/vi/BiLYO8n9h4A/hqdefault.jpg",
-      duration: "12:34",
-      type: "Documentary"
+    { 
+      id: 1, 
+      title: "The Cost of Fast Fashion in Rural India", 
+      url: "https://www.youtube.com/watch?v=BiLYO8n9h4A", 
+      thumbnail: "https://img.youtube.com/vi/BiLYO8n9h4A/hqdefault.jpg", 
+      duration: "12:34", 
+      type: "Documentary" 
     },
-    {
-      id: 2,
-      title: "Silence in the Alps: Glacial Retreat",
-      url: "https://www.youtube.com/watch?v=qJ5h5tD6vCk",
-      thumbnail: "https://img.youtube.com/vi/qJ5h5tD6vCk/hqdefault.jpg",
-      duration: "08:45",
-      type: "Reportage"
+    { 
+      id: 2, 
+      title: "Silence in the Alps: Glacial Retreat", 
+      url: "https://www.youtube.com/watch?v=qJ5h5tD6vCk", 
+      thumbnail: "https://img.youtube.com/vi/qJ5h5tD6vCk/hqdefault.jpg", 
+      duration: "08:45", 
+      type: "Reportage" 
     },
-    {
-      id: 3,
-      title: "Urban Farming Revolution",
-      url: "https://www.youtube.com/watch?v=1F56g401f8k",
-      thumbnail: "https://img.youtube.com/vi/1F56g401f8k/hqdefault.jpg",
-      duration: "15:20",
-      type: "Feature"
+    { 
+      id: 3, 
+      title: "Urban Farming Revolution", 
+      url: "https://www.youtube.com/watch?v=1F56g401f8k", 
+      thumbnail: "https://img.youtube.com/vi/1F56g401f8k/hqdefault.jpg", 
+      duration: "15:20", 
+      type: "Feature" 
     }
   ],
   jobs: [
@@ -74,8 +74,8 @@ const INITIAL_CONTENT: SiteContent = {
       content: "We collect minimal data necessary to provide our services. We do not sell your personal information to third parties."
     },
     terms: {
-      title: "Terms of Use",
-      content: "By accessing Vakya, you agree to respect intellectual property rights and engage in civil discourse."
+        title: "Terms of Use",
+        content: "By accessing Vakya, you agree to respect intellectual property rights and engage in civil discourse."
     },
     cookie_policy: {
       title: "Cookie Policy",
@@ -121,20 +121,20 @@ const App: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
-
+  
   // Site Content State (Lifted up for Admin Editing)
   const [siteContent, setSiteContent] = useState<SiteContent>(INITIAL_CONTENT);
 
   // Initial Data Fetch
   useEffect(() => {
     getArticles().then(setArticles);
-
+    
     // Load Site Content from Firestore
     const loadContent = async () => {
-      const storedContent = await getSiteContent();
-      if (storedContent) {
-        setSiteContent(storedContent);
-      }
+        const storedContent = await getSiteContent();
+        if (storedContent) {
+            setSiteContent(storedContent);
+        }
     };
     loadContent();
   }, []);
@@ -155,7 +155,7 @@ const App: React.FC = () => {
   }, []);
 
   if (loadingUser) {
-    return <div className="min-h-screen flex items-center justify-center bg-vakya-paper font-serif text-2xl">Loading Vakya...</div>;
+      return <div className="min-h-screen flex items-center justify-center bg-vakya-paper font-serif text-2xl">Loading Vakya...</div>;
   }
 
   return (
@@ -172,7 +172,7 @@ const App: React.FC = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/careers" element={<Careers jobs={siteContent.jobs} />} />
-
+          
           {/* Static Pages */}
           <Route path="/privacy" element={<StaticPage type="privacy" content={siteContent.pages.privacy} />} />
           <Route path="/terms" element={<StaticPage type="terms" content={siteContent.pages.terms} />} />
@@ -185,19 +185,19 @@ const App: React.FC = () => {
           <Route path="/pitch" element={<StaticPage type="pitch" content={siteContent.pages.pitch} />} />
 
           {/* Protected Routes */}
-          <Route
-            path="/admin"
-            element={user?.role === 'admin' ? <AdminDashboard siteContent={siteContent} setSiteContent={setSiteContent} /> : <Navigate to="/auth" />}
+          <Route 
+            path="/admin" 
+            element={user?.role === 'admin' ? <AdminDashboard siteContent={siteContent} setSiteContent={setSiteContent} /> : <Navigate to="/auth" />} 
           />
-          <Route
-            path="/writer"
-            element={user?.role === 'writer' ? <WriterProfile user={user} /> : <Navigate to="/auth" />}
+          <Route 
+            path="/writer" 
+            element={user?.role === 'writer' ? <WriterProfile user={user} /> : <Navigate to="/auth" />} 
           />
-          <Route
-            path="/profile"
-            element={user ? <UserProfilePage user={user} /> : <Navigate to="/auth" />}
+           <Route 
+            path="/profile" 
+            element={user ? <UserProfilePage user={user} /> : <Navigate to="/auth" />} 
           />
-
+          
           {/* Catch all - 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
