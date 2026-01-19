@@ -67,6 +67,20 @@ export interface JobPosting {
   type: 'Full-time' | 'Part-time' | 'Contract' | 'Remote';
 }
 
+export interface JobApplication {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  applicantName: string;
+  email: string;
+  linkedinUrl: string;
+  portfolioUrl: string; // GitHub, Blog, Portfolio etc.
+  resumeUrl: string;
+  pitch: string;
+  submittedAt: string;
+  status: 'new' | 'reviewed' | 'shortlisted' | 'rejected';
+}
+
 export interface SiteContent {
   videos: Video[];
   pages: Record<string, PageContent>;
@@ -74,16 +88,16 @@ export interface SiteContent {
 }
 
 // Navigation Types
-export type ViewState =
-  | 'landing'
-  | 'articles'
-  | 'article_detail'
-  | 'store'
-  | 'about'
-  | 'contact'
-  | 'auth'
-  | 'admin_dashboard'
-  | 'writer_profile'
+export type ViewState = 
+  | 'landing' 
+  | 'articles' 
+  | 'article_detail' 
+  | 'store' 
+  | 'about' 
+  | 'contact' 
+  | 'auth' 
+  | 'admin_dashboard' 
+  | 'writer_profile' 
   | 'user_profile'
   | 'ethics'
   | 'financials'

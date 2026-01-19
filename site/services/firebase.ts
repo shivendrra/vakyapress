@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc } from "firebase/firestore";
-import { Article, UserProfile, UserRole, SiteContent, Product } from '../types';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc, query, orderBy } from "firebase/firestore";
+import { Article, UserProfile, UserRole, SiteContent, Product, JobApplication } from '../types';
 
 // User provided configuration
 const firebaseConfig = {
@@ -210,4 +210,40 @@ export const saveSiteContent = async (content: SiteContent): Promise<void> => {
     console.error("Error saving site content", e);
     throw e;
   }
+};
+
+// --- Job Applications ---
+
+export const submitJobApplication = async (application: Omit<JobApplication, 'id'>): Promise<void> => {
+    try {
+        await addDoc(collection(db, "job_applications"), application);
+    } catch (error) {
+        console.error("Error submitting application:", error);
+        throw error;
+    }
+};
+
+export const getJobApplications = async (): Promise<JobApplication[]> => {
+    try {
+        const q = query(collection(db, "job_applications"), orderBy("submittedAt", "desc"));
+        const snapshot = await getDocs(q);
+        const apps: JobApplication[] = [];
+        snapshot.forEach(doc => {
+            apps.push({ id: doc.id, ...doc.data() } as JobApplication);
+        });
+        return apps;
+    } catch (error) {
+        console.error("Error fetching applications:", error);
+        return [];
+    }
+};
+
+export const updateApplicationStatus = async (id: string, status: JobApplication['status']): Promise<void> => {
+    try {
+        const docRef = doc(db, "job_applications", id);
+        await updateDoc(docRef, { status });
+    } catch (error) {
+        console.error("Error updating status:", error);
+        throw error;
+    }
 };
