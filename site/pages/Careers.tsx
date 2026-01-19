@@ -185,34 +185,34 @@ const Careers: React.FC<CareersProps> = ({ jobs }) => {
                   <div className="grid md:grid-cols-2 gap-6 mb-6">
                     <div className="col-span-2 md:col-span-1">
                       <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Full Name</label>
-                      <input required type="text" className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="Jane Doe" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                      <input required type="text" className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="Jane Doe" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                     </div>
                     <div className="col-span-2 md:col-span-1">
                       <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Email Address</label>
-                      <input required type="email" className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="jane@example.com" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                      <input required type="email" className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="jane@example.com" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6 mb-6">
                     <div className="col-span-2 md:col-span-1">
                       <label className="block text-xs font-bold uppercase text-gray-500 mb-2">LinkedIn URL</label>
-                      <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="linkedin.com/in/jane" value={formData.linkedin} onChange={e => setFormData({ ...formData, linkedin: e.target.value })} />
+                      <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="linkedin.com/in/jane" value={formData.linkedin} onChange={e => setFormData({ ...formData, linkedin: e.target.value })} />
                     </div>
                     <div className="col-span-2 md:col-span-1">
                       <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Portfolio / GitHub / Blog URL</label>
-                      <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="github.com/jane or myportfolio.com" value={formData.portfolio} onChange={e => setFormData({ ...formData, portfolio: e.target.value })} />
+                      <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="github.com/jane or myportfolio.com" value={formData.portfolio} onChange={e => setFormData({ ...formData, portfolio: e.target.value })} />
                     </div>
                   </div>
 
                   <div className="mb-6">
                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Resume / CV URL</label>
-                    <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="Google Drive Link or DropBox Link" value={formData.resume} onChange={e => setFormData({ ...formData, resume: e.target.value })} />
+                    <input required type="url" className="w-full p-3 border border-gray-300 bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="Google Drive Link or DropBox Link" value={formData.resume} onChange={e => setFormData({ ...formData, resume: e.target.value })} />
                     <p className="text-xs text-gray-400 mt-1">Please ensure the link is publicly accessible.</p>
                   </div>
 
                   <div className="mb-8">
                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">The Pitch (Introduction)</label>
-                    <textarea required rows={6} maxLength={1200} className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none" placeholder="Tell us who you are and why you want to work at Vakya (approx 150 words)..." value={formData.pitch} onChange={e => setFormData({ ...formData, pitch: e.target.value })}></textarea>
+                    <textarea required rows={6} maxLength={1200} className="w-full p-3 border border-gray-300 font-serif text-lg bg-gray-50 focus:bg-white focus:border-black transition-colors outline-none text-gray-900" placeholder="Tell us who you are and why you want to work at Vakya (approx 150 words)..." value={formData.pitch} onChange={e => setFormData({ ...formData, pitch: e.target.value })}></textarea>
                     <div className="text-right text-xs text-gray-400 mt-1">{formData.pitch.length > 0 ? `${formData.pitch.split(' ').length} words` : '0 words'}</div>
                   </div>
 

@@ -23,18 +23,18 @@ const Masthead: React.FC = () => {
   const DepartmentSection = ({ title, members }: { title: string, members: StaffProfile[] }) => {
     if (members.length === 0) return null;
     return (
-      <div className="mb-16">
-        <h2 className="font-serif text-3xl font-bold mb-6 border-b border-black pb-2">{title}</h2>
-        <ul className="space-y-4">
+      <div className="mb-12">
+        <h2 className="font-serif text-4xl mb-6 border-b border-black pb-2">{title}</h2>
+        <ul className="space-y-3">
           {members.map(member => (
-            <li key={member.id} className="text-lg leading-relaxed">
-              <span className="mr-3">•</span>
-              <span className="font-serif italic text-gray-600 mr-2">
+            <li key={member.id} className="flex items-baseline gap-3">
+              <span className="text-black font-bold text-sm">•</span>
+              <span className="font-serif italic text-xl text-gray-600">
                 {member.title}
               </span>
               <Link
                 to={`/staff/${member.id}`}
-                className="font-sans font-bold text-sm uppercase tracking-widest border-b border-gray-300 hover:border-black hover:bg-black hover:text-white transition-all px-1"
+                className="font-sans font-bold text-sm uppercase tracking-widest text-black hover:text-vakya-salmon transition-colors"
               >
                 {member.name}
               </Link>
@@ -50,21 +50,19 @@ const Masthead: React.FC = () => {
   return (
     <div className="min-h-screen bg-white pb-24">
 
-      {/* Header Image */}
-      <div className="w-full bg-vakya-paper border-b border-black/5 mb-16">
-        <div className="max-w-4xl mx-auto pt-12 pb-8 px-4 flex justify-center">
-          <img
-            src="https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/header.png"
-            alt="Vakya Press Header"
-            className="w-full max-w-2xl object-contain opacity-90"
-          />
-        </div>
+      {/* Header Image - Full Screen Width */}
+      <div className="w-full mb-12">
+        <img
+          src="https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/header.png"
+          alt="Vakya Press Header"
+          className="w-full h-auto max-h-[500px] object-cover"
+        />
       </div>
 
       <div className="max-w-3xl mx-auto px-6">
         {/* Title */}
-        <div className="text-left mb-16">
-          <h1 className="font-serif text-6xl text-vakya-black mb-2">Masthead</h1>
+        <div className="text-left mb-16 mt-8">
+          <h1 className="font-serif text-5xl text-vakya-black mb-2">Masthead</h1>
           <p className="font-sans text-xs font-bold uppercase tracking-widest text-gray-400">
             Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>

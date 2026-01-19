@@ -235,7 +235,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     });
   };
 
-  // --- VIDEO & PAGE HANDLERS (Simplified for brevity) ---
+  // --- VIDEO & PAGE HANDLERS ---
   const getYoutubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
@@ -504,15 +504,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                       <div className="grid grid-cols-2 gap-6">
                         <div>
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Full Name</label>
-                          <input className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.name} onChange={e => setEditingStaff({ ...editingStaff, name: e.target.value })} placeholder="Jane Doe" />
+                          <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.name} onChange={e => setEditingStaff({ ...editingStaff, name: e.target.value })} placeholder="Jane Doe" />
                         </div>
                         <div>
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Job Title</label>
-                          <input className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.title} onChange={e => setEditingStaff({ ...editingStaff, title: e.target.value })} placeholder="Senior Editor" />
+                          <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.title} onChange={e => setEditingStaff({ ...editingStaff, title: e.target.value })} placeholder="Senior Editor" />
                         </div>
                         <div>
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Department</label>
-                          <select className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.department} onChange={e => setEditingStaff({ ...editingStaff, department: e.target.value as any })}>
+                          <select className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.department} onChange={e => setEditingStaff({ ...editingStaff, department: e.target.value as any })}>
                             <option value="Editorial">Editorial</option>
                             <option value="Creative">Creative (Art/Video/Sound)</option>
                             <option value="Production">Production</option>
@@ -522,12 +522,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                         </div>
                         <div>
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Profile Image URL</label>
-                          <input className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.image} onChange={e => setEditingStaff({ ...editingStaff, image: e.target.value })} />
+                          <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.image} onChange={e => setEditingStaff({ ...editingStaff, image: e.target.value })} />
                         </div>
                       </div>
                       <div className="mt-4">
                         <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Bio</label>
-                        <textarea rows={4} className="w-full p-3 border border-gray-300 bg-white font-serif" value={editingStaff.bio} onChange={e => setEditingStaff({ ...editingStaff, bio: e.target.value })} />
+                        <textarea rows={4} className="w-full p-3 border border-gray-300 bg-white text-black font-serif" value={editingStaff.bio} onChange={e => setEditingStaff({ ...editingStaff, bio: e.target.value })} />
                       </div>
                     </div>
 
@@ -536,12 +536,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                       <div className="bg-gray-50 p-4 rounded">
                         <div className="mb-4">
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Account Email</label>
-                          <input type="email" className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.email} onChange={e => setEditingStaff({ ...editingStaff, email: e.target.value })} placeholder="jane@vakyapress.com" />
+                          <input type="email" className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.email} onChange={e => setEditingStaff({ ...editingStaff, email: e.target.value })} placeholder="jane@vakyapress.com" />
                           <p className="text-xs text-gray-400 mt-1">Must match their registered login email.</p>
                         </div>
                         <div>
                           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Platform Role</label>
-                          <select className="w-full p-3 border border-gray-300 bg-white" value={editingStaff.accessLevel} onChange={e => setEditingStaff({ ...editingStaff, accessLevel: e.target.value as UserRole })}>
+                          <select className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.accessLevel} onChange={e => setEditingStaff({ ...editingStaff, accessLevel: e.target.value as UserRole })}>
                             <option value="audience">No Access (Public Profile Only)</option>
                             <option value="writer">Writer (Can Create Articles)</option>
                             <option value="admin">Admin (Full Control)</option>
@@ -553,10 +553,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                     <div className="col-span-2 md:col-span-1 pl-4">
                       <h4 className="font-sans font-bold uppercase tracking-widest text-sm text-gray-400 mb-4">Social Links</h4>
                       <div className="space-y-3">
-                        <input className="w-full p-2 border border-gray-300 text-sm" placeholder="Twitter URL" value={editingStaff.socials.twitter || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, twitter: e.target.value } })} />
-                        <input className="w-full p-2 border border-gray-300 text-sm" placeholder="LinkedIn URL" value={editingStaff.socials.linkedin || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, linkedin: e.target.value } })} />
-                        <input className="w-full p-2 border border-gray-300 text-sm" placeholder="Website URL" value={editingStaff.socials.website || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, website: e.target.value } })} />
-                        <input className="w-full p-2 border border-gray-300 text-sm" placeholder="Instagram URL" value={editingStaff.socials.instagram || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, instagram: e.target.value } })} />
+                        <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Twitter URL" value={editingStaff.socials.twitter || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, twitter: e.target.value } })} />
+                        <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="LinkedIn URL" value={editingStaff.socials.linkedin || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, linkedin: e.target.value } })} />
+                        <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Website URL" value={editingStaff.socials.website || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, website: e.target.value } })} />
+                        <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Instagram URL" value={editingStaff.socials.instagram || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, instagram: e.target.value } })} />
                       </div>
                     </div>
                   </div>
@@ -565,10 +565,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
             </div>
           )}
 
-          {/* --- STORE TAB (Already implemented above) --- */}
+          {/* --- STORE TAB --- */}
           {activeTab === 'store' && (
             <div>
-              {/* ... Store logic remains similar but simplified here for brevity since we focus on Staff ... */}
               {!editingProduct ? (
                 <div className="bg-white border border-gray-200">
                   <div className="p-4 flex justify-between items-center border-b">
@@ -578,32 +577,245 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                   {products.map(p => (
                     <div key={p.id} className="p-4 border-b flex justify-between items-center hover:bg-gray-50">
                       <span>{p.name}</span>
-                      <button onClick={() => setEditingProduct(p)} className="text-blue-600 text-xs font-bold uppercase">Edit</button>
+                      <div className="flex gap-4 items-center">
+                        <span className="text-sm font-bold">${p.price}</span>
+                        <button onClick={() => setEditingProduct(p)} className="text-blue-600 text-xs font-bold uppercase">Edit</button>
+                        <button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 text-xs font-bold uppercase">Delete</button>
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="bg-white p-8 border border-gray-200">
-                  {/* Product Editor Form - Simplified for this context */}
                   <h3 className="font-serif text-2xl mb-4">Edit Product</h3>
-                  <input className="block w-full mb-4 p-2 border" value={editingProduct.name} onChange={e => setEditingProduct({ ...editingProduct, name: e.target.value })} placeholder="Name" />
-                  <input className="block w-full mb-4 p-2 border" type="number" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })} placeholder="Price" />
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.name} onChange={e => setEditingProduct({ ...editingProduct, name: e.target.value })} placeholder="Name" />
+                    <input className="block w-full p-2 border border-gray-300 bg-white text-black" type="number" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })} placeholder="Price" />
+                    <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.image} onChange={e => setEditingProduct({ ...editingProduct, image: e.target.value })} placeholder="Image URL" />
+                    <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.category} onChange={e => setEditingProduct({ ...editingProduct, category: e.target.value })} placeholder="Category" />
+                    <textarea className="col-span-2 block w-full p-2 border border-gray-300 bg-white text-black" rows={4} value={editingProduct.description} onChange={e => setEditingProduct({ ...editingProduct, description: e.target.value })} placeholder="Description" />
+                    <div className="col-span-2">
+                      <label className="text-xs uppercase font-bold text-gray-500">Stock</label>
+                      <input className="block w-full p-2 border border-gray-300 bg-white text-black" type="number" value={editingProduct.stock} onChange={e => setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })} />
+                    </div>
+                  </div>
                   <div className="flex gap-4">
-                    <button onClick={handleSaveProduct} className="bg-black text-white px-6 py-2">Save</button>
-                    <button onClick={() => setEditingProduct(null)} className="text-gray-500">Cancel</button>
+                    <button onClick={handleSaveProduct} className="bg-black text-white px-6 py-2 uppercase font-bold text-xs tracking-widest">Save</button>
+                    <button onClick={() => setEditingProduct(null)} className="text-gray-500 uppercase font-bold text-xs">Cancel</button>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* --- LANDER, PAGES, CAREERS, APPLICATIONS --- */}
-          {/* (Preserving existing logic structure, ensuring nothing breaks, but hiding details for brevity as the prompt focuses on Staff) */}
+          {/* --- LANDER TAB --- */}
           {activeTab === 'lander' && (
-            <div><h2 className="font-serif text-3xl mb-4">Front Page Media</h2>{/* Same logic as previous */}</div>
+            <div>
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="font-serif text-3xl">Front Page Videos</h2>
+                <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black">
+                  {isSaving ? 'Saving All Changes...' : 'Save Changes'}
+                </button>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                {siteContent.videos.map(video => (
+                  <div key={video.id} className="bg-white border border-gray-200 p-4">
+                    <div className="mb-4 aspect-video bg-gray-100 relative">
+                      <img src={video.thumbnail} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">YouTube URL</label>
+                        <div className="flex gap-2">
+                          <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.url} onChange={e => handleVideoChange(video.id, 'url', e.target.value)} />
+                          <button onClick={() => autoFetchVideoDetails(video.id, video.url)} className="bg-gray-100 p-2 hover:bg-gray-200" title="Auto-fill details">
+                            {fetchingVideoId === video.id ? '...' : 'AI'}
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Title</label>
+                        <input className="w-full p-2 border border-gray-300 text-sm font-bold bg-white text-black" value={video.title} onChange={e => handleVideoChange(video.id, 'title', e.target.value)} />
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="w-1/2">
+                          <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Duration</label>
+                          <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.duration} onChange={e => handleVideoChange(video.id, 'duration', e.target.value)} />
+                        </div>
+                        <div className="w-1/2">
+                          <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Type</label>
+                          <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.type} onChange={e => handleVideoChange(video.id, 'type', e.target.value)} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
+
+          {/* --- PAGES TAB --- */}
+          {activeTab === 'pages' && (
+            <div className="grid md:grid-cols-4 gap-8">
+              <div className="md:col-span-1 space-y-2 border-r border-gray-200 pr-6">
+                <h3 className="font-sans font-bold uppercase text-sm text-gray-400 mb-4">Select Page</h3>
+                {Object.entries(pageLabels).map(([slug, label]) => (
+                  <button
+                    key={slug}
+                    onClick={() => setEditingPage(slug)}
+                    className={`block w-full text-left px-3 py-2 text-sm font-bold uppercase tracking-widest ${editingPage === slug ? 'bg-vakya-black text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="md:col-span-3">
+                {editingPage && siteContent.pages[editingPage] ? (
+                  <div>
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="font-serif text-3xl">{pageLabels[editingPage]}</h2>
+                      <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black">
+                        {isSaving ? 'Saving...' : 'Save Page Content'}
+                      </button>
+                    </div>
+                    <div className="mb-6">
+                      <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Page Title</label>
+                      <input
+                        className="w-full p-3 border border-gray-300 font-serif text-2xl bg-white text-black"
+                        value={siteContent.pages[editingPage].title}
+                        onChange={e => handlePageContentChange(editingPage, 'title', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Content (Markdown)</label>
+                      <textarea
+                        className="w-full p-4 border border-gray-300 font-mono text-sm h-[500px] bg-white text-black"
+                        value={siteContent.pages[editingPage].content}
+                        onChange={e => handlePageContentChange(editingPage, 'content', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-gray-400">
+                    Select a page from the sidebar to edit content.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* --- CAREERS TAB --- */}
+          {activeTab === 'careers' && (
+            <div>
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="font-serif text-3xl">Open Positions</h2>
+                <div className="flex gap-4">
+                  <button onClick={addNewJob} className="bg-gray-100 text-black px-4 py-2 font-bold uppercase text-xs hover:bg-gray-200">+ Add Job</button>
+                  <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black">
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-8">
+                {siteContent.jobs.map((job) => (
+                  <div key={job.id} className="bg-white border border-gray-200 p-6">
+                    <div className="grid md:grid-cols-2 gap-6 mb-4">
+                      <div className="col-span-2">
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Job Title</label>
+                        <input className="w-full p-2 border border-gray-300 font-serif text-xl bg-white text-black" value={job.title} onChange={e => handleJobChange(job.id, 'title', e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Location</label>
+                        <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.location} onChange={e => handleJobChange(job.id, 'location', e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Type</label>
+                        <select className="w-full p-2 border border-gray-300 bg-white text-black" value={job.type} onChange={e => handleJobChange(job.id, 'type', e.target.value as any)}>
+                          <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option>
+                        </select>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Short Description</label>
+                        <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.shortDescription} onChange={e => handleJobChange(job.id, 'shortDescription', e.target.value)} />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Required Skills (Comma separated)</label>
+                        <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.skills} onChange={e => handleJobChange(job.id, 'skills', e.target.value)} />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Full Description (Markdown)</label>
+                        <textarea rows={6} className="w-full p-2 border border-gray-300 font-mono text-sm bg-white text-black" value={job.longDescription} onChange={e => handleJobChange(job.id, 'longDescription', e.target.value)} />
+                      </div>
+                    </div>
+                    <button onClick={() => setSiteContent(prev => ({ ...prev, jobs: prev.jobs.filter(j => j.id !== job.id) }))} className="text-red-600 text-xs font-bold uppercase hover:underline">Delete Position</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* --- APPLICATIONS TAB --- */}
           {activeTab === 'applications' && (
-            <div><h2 className="font-serif text-3xl mb-4">Job Applications</h2>{/* Same logic as previous */}</div>
+            <div>
+              <h2 className="font-serif text-3xl mb-8">Job Applications</h2>
+              <div className="bg-white border border-gray-200 overflow-hidden">
+                {applications.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">No applications received yet.</div>
+                ) : (
+                  <div className="divide-y divide-gray-100">
+                    {applications.map(app => (
+                      <div key={app.id} className="p-6 hover:bg-gray-50">
+                        <div className="flex justify-between items-start cursor-pointer" onClick={() => setExpandedAppId(expandedAppId === app.id ? null : app.id)}>
+                          <div>
+                            <div className="flex items-center gap-3 mb-1">
+                              <h3 className="font-serif text-xl">{app.applicantName}</h3>
+                              <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded ${app.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                                app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                  'bg-green-100 text-green-800'
+                                }`}>{app.status}</span>
+                            </div>
+                            <p className="text-sm text-gray-600">Applied for <span className="font-bold">{app.jobTitle}</span> • {new Date(app.submittedAt).toLocaleDateString()}</p>
+                          </div>
+                          <div className="text-sm text-gray-400">{expandedAppId === app.id ? 'Collapse' : 'Expand'}</div>
+                        </div>
+
+                        {expandedAppId === app.id && (
+                          <div className="mt-6 pt-6 border-t border-gray-100 animate-fade-in">
+                            <div className="grid md:grid-cols-2 gap-6 mb-6">
+                              <div>
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-1">Email</p>
+                                <a href={`mailto:${app.email}`} className="hover:underline">{app.email}</a>
+                              </div>
+                              <div>
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-1">LinkedIn</p>
+                                <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">View Profile</a>
+                              </div>
+                              <div>
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-1">Portfolio</p>
+                                <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">View Portfolio</a>
+                              </div>
+                              <div>
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-1">Resume</p>
+                                <a href={app.resumeUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">Download Resume</a>
+                              </div>
+                            </div>
+                            <div className="mb-6">
+                              <p className="text-xs font-bold uppercase text-gray-400 mb-2">The Pitch</p>
+                              <p className="bg-gray-50 p-4 rounded text-sm leading-relaxed">{app.pitch}</p>
+                            </div>
+                            <div className="flex gap-3">
+                              <button onClick={() => handleStatusChange(app.id, 'shortlisted')} className="px-4 py-2 bg-black text-white text-xs font-bold uppercase hover:bg-green-600">Shortlist</button>
+                              <button onClick={() => handleStatusChange(app.id, 'reviewed')} className="px-4 py-2 bg-gray-200 text-black text-xs font-bold uppercase hover:bg-gray-300">Mark Reviewed</button>
+                              <button onClick={() => handleStatusChange(app.id, 'rejected')} className="px-4 py-2 bg-white border border-gray-300 text-gray-500 text-xs font-bold uppercase hover:bg-red-50 hover:text-red-600">Reject</button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
         </div>
