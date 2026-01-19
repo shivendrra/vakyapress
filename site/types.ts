@@ -81,6 +81,24 @@ export interface JobApplication {
   status: 'new' | 'reviewed' | 'shortlisted' | 'rejected';
 }
 
+export interface StaffProfile {
+  id: string; // Slug (e.g. swati-sharma)
+  name: string;
+  title: string; // e.g. Editor-in-Chief
+  department: 'Editorial' | 'Creative' | 'Production' | 'Tech' | 'Management';
+  bio: string;
+  image: string;
+  email: string;
+  socials: {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    website?: string;
+    substack?: string;
+  };
+  accessLevel: UserRole; // This controls their login permission
+}
+
 export interface SiteContent {
   videos: Video[];
   pages: Record<string, PageContent>;

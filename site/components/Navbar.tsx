@@ -35,6 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const navLinks: { label: string; path: string }[] = [
     { label: 'Articles', path: '/articles' },
+    { label: 'Projects', path: '/projects' },
     { label: 'Store', path: '/store' },
     { label: 'About', path: '/about' },
     { label: 'Contact', path: '/contact' },
