@@ -37,26 +37,33 @@ const ArticleDetail: React.FC = () => {
     if (article) {
       document.title = `${article.title} | Vakya`;
 
-      const setMeta = (name: string, content: string, isProperty = false) => {
-        const attr = isProperty ? 'property' : 'name';
-        let element = document.querySelector(`meta[${attr}="${name}"]`);
+      const metaTags = [
+        { name: 'description', content: article.excerpt || article.subtitle || 'Read this article on Vakya.' },
+        { property: 'og:title', content: article.title },
+        { property: 'og:description', content: article.excerpt || article.subtitle || 'Read this article on Vakya.' },
+        { property: 'og:image', content: article.imageUrl },
+        { property: 'og:url', content: window.location.href },
+        { property: 'og:type', content: 'article' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: article.title },
+        { name: 'twitter:description', content: article.excerpt || article.subtitle || '' },
+        { name: 'twitter:image', content: article.imageUrl }
+      ];
+
+      metaTags.forEach(tag => {
+        const selector = tag.name ? `meta[name="${tag.name}"]` : `meta[property="${tag.property}"]`;
+        let element = document.querySelector(selector);
         if (!element) {
           element = document.createElement('meta');
-          element.setAttribute(attr, name);
+          if (tag.name) element.setAttribute('name', tag.name);
+          if (tag.property) element.setAttribute('property', tag.property);
           document.head.appendChild(element);
         }
-        element.setAttribute('content', content);
-      };
-
-      setMeta('description', article.excerpt || article.subtitle || 'Read this article on Vakya.');
-      setMeta('og:title', article.title, true);
-      setMeta('og:description', article.excerpt || article.subtitle || 'Read this article on Vakya.', true);
-      setMeta('og:image', article.imageUrl, true);
-      setMeta('og:url', window.location.href, true);
-      setMeta('og:type', 'article', true);
+        element.setAttribute('content', tag.content || '');
+      });
     }
 
-    // Cleanup to reset title when unmounting
+    // Cleanup to reset title when unmounting (optional, but good practice)
     return () => {
       document.title = 'Vakya | Journalism for the People';
     };
@@ -147,8 +154,8 @@ const ArticleDetail: React.FC = () => {
   // STANDARD LAYOUT
   return (
     <article className="min-h-screen bg-white pb-24">
-      {/* Article Header Image */}
-      <div className="w-full h-[60vh] relative">
+      {/* Article Header Image - Full width */}
+      <div className="w-full h-[60vh] md:h-[70vh] relative overflow-hidden">
         <img src={article.imageUrl} className="w-full h-full object-cover" alt="Cover" />
         <div className="absolute inset-0 bg-black/30"></div>
         <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
@@ -156,7 +163,7 @@ const ArticleDetail: React.FC = () => {
             <span className="bg-vakya-accent text-vakya-black px-3 py-1 font-sans text-xs font-bold uppercase tracking-widest mb-4 inline-block">
               {article.category}
             </span>
-            <h1 className="font-serif text-5xl md:text-6xl leading-tight mb-4">
+            <h1 className="font-serif text-5xl md:text-7xl leading-tight mb-4 drop-shadow-md">
               {article.title}
             </h1>
           </div>

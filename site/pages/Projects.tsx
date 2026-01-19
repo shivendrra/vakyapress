@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Project {
@@ -16,7 +16,7 @@ const PROJECTS: Project[] = [
     title: 'Spectacle',
     description: 'A quarterly magazine exploring society, photography, art, and culture. Centered on the human experience in nature and travel—akin to the spirit of National Geographic but with a raw, indie soul. Curated and run entirely by contributions from independent photographers around the world and designers at Vakya. Fully hand-crafted, with zero AI involvement.',
     link: '#',
-    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Spectacle&font=playfair-display', 
+    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Spectacle&font=playfair-display',
     accentColor: 'bg-vakya-salmon'
   },
   {
@@ -40,9 +40,13 @@ const PROJECTS: Project[] = [
 const Projects: React.FC = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.title = "Projects | Vakya";
+  }, []);
+
   return (
     <div className="min-h-screen bg-vakya-paper">
-      
+
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 border-b border-black/5">
         <div className="max-w-7xl mx-auto text-center">
@@ -64,21 +68,21 @@ const Projects: React.FC = () => {
           <div className="space-y-32">
             {PROJECTS.map((project, index) => {
               const isEven = index % 2 === 0;
-              
+
               return (
-                <div 
-                  key={project.id} 
+                <div
+                  key={project.id}
                   className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 ${isEven ? '' : 'md:flex-row-reverse'}`}
                 >
                   {/* Visual Side */}
                   <div className="w-full md:w-1/2 flex justify-center relative group">
                     {/* The Hazy Gradient/Shadow */}
                     <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 ${project.accentColor} rounded-full blur-[80px] opacity-60 group-hover:opacity-80 transition-opacity duration-700`}></div>
-                    
+
                     {/* Logo */}
-                    <img 
-                      src={project.logoPlaceholder} 
-                      alt={project.title} 
+                    <img
+                      src={project.logoPlaceholder}
+                      alt={project.title}
                       className="relative z-10 w-64 h-64 object-contain drop-shadow-sm transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -92,8 +96,8 @@ const Projects: React.FC = () => {
                     <p className="font-sans text-lg text-gray-600 leading-relaxed mb-8">
                       {project.description}
                     </p>
-                    
-                    <a 
+
+                    <a
                       href={project.link}
                       className="inline-flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-widest text-vakya-black border-b-2 border-transparent hover:border-vakya-salmon hover:text-gray-600 transition-all pb-1"
                     >
@@ -112,16 +116,16 @@ const Projects: React.FC = () => {
 
       {/* Footer Callout */}
       <section className="py-24 bg-white border-t border-black/5">
-         <div className="max-w-4xl mx-auto text-center px-4">
-            <h3 className="font-serif text-4xl mb-6">Have an idea for a collaboration?</h3>
-            <p className="font-sans text-gray-500 mb-8">We are always looking to partner with creators on new projects.</p>
-            <button 
-              onClick={() => navigate('/contact')}
-              className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
-            >
-              Get in Touch
-            </button>
-         </div>
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h3 className="font-serif text-4xl mb-6">Have an idea for a collaboration?</h3>
+          <p className="font-sans text-gray-500 mb-8">We are always looking to partner with creators on new projects.</p>
+          <button
+            onClick={() => navigate('/contact')}
+            className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
+          >
+            Get in Touch
+          </button>
+        </div>
       </section>
 
     </div>

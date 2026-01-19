@@ -38,35 +38,37 @@ const StaffProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-vakya-paper pt-12 pb-24">
+    <div className="min-h-screen bg-vakya-paper pt-16 pb-24">
       <div className="max-w-4xl mx-auto px-6">
 
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row gap-10 items-start border-b border-black/10 pb-12 mb-16">
+        <div className="flex flex-col md:flex-row gap-12 items-start border-b border-black/10 pb-12 mb-16">
           {/* Image */}
-          <div className="w-48 h-48 flex-shrink-0">
+          <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative">
+            <div className="absolute inset-0 bg-vakya-accent rounded-full translate-x-2 translate-y-2"></div>
             <img
               src={staff.image || `https://ui-avatars.com/api/?name=${staff.name}&size=256`}
               alt={staff.name}
-              className="w-full h-full object-cover rounded-full grayscale border border-gray-200"
+              className="w-full h-full object-cover rounded-full grayscale border-2 border-black relative z-10"
             />
           </div>
 
           {/* Info */}
-          <div className="flex-1">
-            <h1 className="font-serif text-5xl md:text-6xl mb-4 text-vakya-black leading-tight">
+          <div className="flex-1 pt-4">
+            <h1 className="font-serif text-6xl md:text-7xl mb-4 text-vakya-black leading-none">
               {staff.name}
             </h1>
-            <p className="font-sans text-lg font-bold uppercase tracking-widest text-gray-500 mb-6">
+            <p className="font-sans text-sm md:text-base font-bold uppercase tracking-[0.2em] text-vakya-salmon mb-8">
               {staff.title}
             </p>
 
-            <div className="font-serif text-xl text-gray-800 leading-relaxed mb-8 whitespace-pre-wrap">
+            {/* Bio - Updated for better readability */}
+            <div className="font-sans text-lg md:text-xl text-gray-800 leading-loose mb-10 whitespace-pre-wrap max-w-2xl">
               {staff.bio}
             </div>
 
             {/* Socials / Contact */}
-            <div className="flex flex-wrap gap-6 text-sm font-sans font-bold uppercase tracking-widest">
+            <div className="flex flex-wrap gap-6 text-xs font-sans font-bold uppercase tracking-widest border-t border-black/5 pt-6">
               {staff.email && (
                 <a href={`mailto:${staff.email}`} className="flex items-center gap-2 hover:text-vakya-salmon transition-colors">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -98,28 +100,33 @@ const StaffProfilePage: React.FC = () => {
         {/* Articles Section */}
         {articles.length > 0 ? (
           <div>
-            <h2 className="font-serif text-3xl mb-8 border-l-4 border-vakya-accent pl-4">Stories by {staff.name}</h2>
+            <div className="flex items-center gap-4 mb-10">
+              <h2 className="font-serif text-3xl">Recent Work</h2>
+              <div className="h-px bg-gray-300 flex-grow"></div>
+            </div>
+
             <div className="grid gap-12">
               {articles.map(article => (
-                <div key={article.id} onClick={() => navigate(`/articles/${article.id}`)} className="group grid md:grid-cols-4 gap-6 items-start cursor-pointer hover:bg-white transition-colors p-4 -mx-4 rounded">
-                  <div className="md:col-span-1 aspect-[4/3] bg-gray-200 overflow-hidden">
+                <div key={article.id} onClick={() => navigate(`/articles/${article.id}`)} className="group grid md:grid-cols-4 gap-6 items-start cursor-pointer transition-colors rounded">
+                  <div className="md:col-span-1 aspect-[4/3] bg-gray-200 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-vakya-salmon/20 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
                     <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                   </div>
-                  <div className="md:col-span-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-sans text-xs font-bold text-vakya-salmon uppercase tracking-widest">{article.category}</span>
-                      <span className="font-sans text-xs text-gray-400">{article.publishedAt}</span>
+                  <div className="md:col-span-3 py-2">
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="font-sans text-xs font-bold text-vakya-black uppercase tracking-widest bg-vakya-accent px-2 py-1">{article.category}</span>
+                      <span className="font-sans text-xs text-gray-400 font-bold uppercase tracking-widest">{article.publishedAt}</span>
                     </div>
-                    <h3 className="font-serif text-2xl md:text-3xl mb-3 leading-tight group-hover:underline decoration-1 underline-offset-4">{article.title}</h3>
-                    <p className="font-sans text-gray-600 mb-0 leading-relaxed line-clamp-2">{article.excerpt}</p>
+                    <h3 className="font-serif text-3xl md:text-4xl mb-4 leading-tight group-hover:text-gray-700 transition-colors">{article.title}</h3>
+                    <p className="font-sans text-gray-600 mb-0 leading-relaxed text-lg line-clamp-2">{article.excerpt}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-400 font-sans text-sm uppercase tracking-widest">
-            No articles published yet.
+          <div className="text-center py-24 border-t border-gray-200">
+            <p className="text-gray-400 font-sans text-sm uppercase tracking-widest">No articles published yet.</p>
           </div>
         )}
       </div>
