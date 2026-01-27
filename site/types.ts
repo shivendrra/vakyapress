@@ -106,6 +106,13 @@ export interface SiteContent {
   jobs: JobPosting[];
 }
 
+export interface CookiePreferences {
+  essential: boolean; // Always true
+  analytics: boolean;
+  marketing: boolean;
+  timestamp: string;
+}
+
 // Navigation Types
 export type ViewState =
   | 'landing'

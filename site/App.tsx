@@ -18,10 +18,13 @@ import Projects from './pages/Projects';
 import StaffProfilePage from './pages/StaffProfile';
 import Masthead from './pages/Masthead';
 import NotFound from './pages/NotFound';
+import PrivacySettings from './pages/PrivacySettings';
+import CookieConsentBanner from './components/CookieConsentBanner';
 
 import { Article, UserProfile, SiteContent } from './types';
 import { getArticles, auth, getUserProfile, getSiteContent } from './services/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { initializeCookies } from './utils/cookieManager';
 
 // Initial Default Content (Fallback) - Only used if DB is completely empty first time
 const INITIAL_CONTENT: SiteContent = {
@@ -49,6 +52,9 @@ const App: React.FC = () => {
 
   // Initial Data Fetch
   useEffect(() => {
+    // Initialize cookies logic
+    initializeCookies();
+
     const fetchData = async () => {
       const fetchedArticles = await getArticles();
       setArticles(fetchedArticles);
@@ -98,16 +104,18 @@ const App: React.FC = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/careers" element={<Careers jobs={siteContent.jobs} />} />
 
-          {/* Static Pages - handle safely if content doesn't exist yet */}
+          {/* Static Pages */}
           <Route path="/privacy" element={<StaticPage type="privacy" content={siteContent.pages?.privacy} />} />
           <Route path="/terms" element={<StaticPage type="terms" content={siteContent.pages?.terms} />} />
           <Route path="/cookie-policy" element={<StaticPage type="cookie_policy" content={siteContent.pages?.cookie_policy} />} />
-          <Route path="/privacy-settings" element={<StaticPage type="privacy_settings" content={siteContent.pages?.privacy_settings} />} />
           <Route path="/licensing" element={<StaticPage type="licensing" content={siteContent.pages?.licensing} />} />
           <Route path="/accessibility" element={<StaticPage type="accessibility" content={siteContent.pages?.accessibility} />} />
           <Route path="/ethics" element={<StaticPage type="ethics" content={siteContent.pages?.ethics} />} />
           <Route path="/financials" element={<StaticPage type="financials" content={siteContent.pages?.financials} />} />
           <Route path="/pitch" element={<StaticPage type="pitch" content={siteContent.pages?.pitch} />} />
+
+          {/* Functional Privacy Settings Page */}
+          <Route path="/privacy-settings" element={<PrivacySettings />} />
 
           {/* Protected Routes */}
           <Route
@@ -128,6 +136,7 @@ const App: React.FC = () => {
         </Routes>
       </main>
       <Footer />
+      <CookieConsentBanner />
     </div>
   );
 };
