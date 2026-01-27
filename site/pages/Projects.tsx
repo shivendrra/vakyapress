@@ -14,25 +14,25 @@ const PROJECTS: Project[] = [
   {
     id: 'spectacle',
     title: 'Spectacle',
-    description: 'A quarterly magazine exploring society, photography, art, and culture. Centered on the human experience in nature and travel—akin to the spirit of National Geographic but with a raw, indie soul. Curated and run entirely by contributions from independent photographers around the world and designers at Vakya. Fully hand-crafted, with zero AI involvement.',
+    description: '(Planned) A quarterly magazine exploring society, photography, art, and culture. Centered on the human experience in nature and travel—akin to the spirit of National Geographic but with a raw, indie soul. Curated and run entirely by contributions from independent photographers around the world and designers at Vakya. Fully hand-crafted, with zero AI involvement.',
     link: '#',
-    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Spectacle&font=playfair-display',
+    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/IndieSpectacleLogo.png',
     accentColor: 'bg-vakya-salmon'
   },
   {
     id: 'draft-four',
     title: 'Draft-Four',
-    description: 'A film production collective that began as an independent passion project to produce a single short film. Today, it stands as a home for experimental storytellers, producing visual narratives that challenge the conventional structures of cinema and documentary filmmaking.',
+    description: '(Planned) A film production collective that began as an independent passion project to produce a single short film. Today, it stands as a home for experimental storytellers, producing visual narratives that challenge the conventional structures of cinema and documentary filmmaking.',
     link: '#',
-    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Draft-Four&font=monospace',
+    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/DraftFour.png',
     accentColor: 'bg-vakya-accent'
   },
   {
     id: 'vyakul',
     title: 'Vyakul',
-    description: 'An educational outreach program dedicated to bridging the opportunity gap. Vyakul works directly with rural schools to provide quality education resources, mentorship, and digital literacy tools to underprivileged children, ensuring that talent is not lost to circumstance.',
+    description: '(Planned) An educational outreach program dedicated to bridging the opportunity gap. Vyakul works directly with rural schools to provide quality education resources, mentorship, and digital literacy tools to underprivileged children, ensuring that talent is not lost to circumstance.',
     link: '#',
-    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Vyakul&font=roboto',
+    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/Vyakul.png',
     accentColor: 'bg-vakya-lavender'
   }
 ];

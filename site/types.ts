@@ -55,6 +55,7 @@ export interface Video {
 export interface PageContent {
   title: string;
   content: string;
+  lastUpdated?: string;
 }
 
 export interface JobPosting {
@@ -106,16 +107,16 @@ export interface SiteContent {
 }
 
 // Navigation Types
-export type ViewState = 
-  | 'landing' 
-  | 'articles' 
-  | 'article_detail' 
-  | 'store' 
-  | 'about' 
-  | 'contact' 
-  | 'auth' 
-  | 'admin_dashboard' 
-  | 'writer_profile' 
+export type ViewState =
+  | 'landing'
+  | 'articles'
+  | 'article_detail'
+  | 'store'
+  | 'about'
+  | 'contact'
+  | 'auth'
+  | 'admin_dashboard'
+  | 'writer_profile'
   | 'user_profile'
   | 'ethics'
   | 'financials'

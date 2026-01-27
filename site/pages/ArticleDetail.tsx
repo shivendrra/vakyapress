@@ -19,6 +19,18 @@ const ArticleDetail: React.FC = () => {
   // Helper to slugify author name for linking
   const getAuthorSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
+  // Helper to format date to DD/MM/YYYY
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -137,7 +149,7 @@ const ArticleDetail: React.FC = () => {
           <div className="flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest opacity-50 mb-12 border-b border-current pb-6">
             <span>{article.author}</span>
             <span>•</span>
-            <span>{article.publishedAt}</span>
+            <span>{formatDate(article.publishedAt)}</span>
           </div>
 
           <div className={getMarkdownThemeOverrides()}>
@@ -179,7 +191,7 @@ const ArticleDetail: React.FC = () => {
             </Link>
             <div>
               <Link to={`/staff/${getAuthorSlug(article.author)}`} className="font-sans font-bold text-gray-900 hover:text-vakya-salmon transition-colors">By {article.author}</Link>
-              <p className="font-sans text-sm text-gray-500">{article.publishedAt}</p>
+              <p className="font-sans text-sm text-gray-500">{formatDate(article.publishedAt)}</p>
             </div>
           </div>
 

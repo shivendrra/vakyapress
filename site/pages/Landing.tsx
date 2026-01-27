@@ -11,7 +11,7 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Vakya | Truth as it is";
+    document.title = "Vakya | Journalism for the People";
   }, []);
 
   return (
@@ -112,8 +112,9 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
                     {video.duration}
                   </div>
                 </div>
+                {/* Changed Layout: Type first, then Title */}
+                <p className="font-sans text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">{video.type}</p>
                 <h3 className="font-serif text-2xl leading-tight group-hover:underline decoration-1 underline-offset-4">{video.title}</h3>
-                <p className="font-sans text-sm text-gray-500 mt-2">{video.type}</p>
               </div>
             ))}
           </div>

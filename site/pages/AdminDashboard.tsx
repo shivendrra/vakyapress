@@ -95,6 +95,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     }
   };
 
+  // Special handler for Page Content to update timestamp
+  const handleSavePageContent = async () => {
+    if (!editingPage) return;
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      // Create a copy of the content with updated timestamp for the specific page
+      const updatedPages = {
+        ...siteContent.pages,
+        [editingPage]: {
+          ...siteContent.pages[editingPage],
+          lastUpdated: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        }
+      };
+
+      const updatedSiteContent = { ...siteContent, pages: updatedPages };
+
+      // Update local state first
+      setSiteContent(updatedSiteContent);
+
+      // Persist to DB
+      await saveSiteContent(updatedSiteContent);
+      setSaveMessage({ text: "Page updated with new timestamp.", type: 'success' });
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (error: any) {
+      console.error(error);
+      setSaveMessage({ text: "Error saving page content.", type: 'error' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // --- STAFF HANDLERS ---
   const handleSaveStaff = async () => {
     if (!editingStaff) return;
@@ -674,7 +707,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                   <div>
                     <div className="flex justify-between items-center mb-6">
                       <h2 className="font-serif text-3xl">{pageLabels[editingPage]}</h2>
-                      <button onClick={persistChanges} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black">
+                      <button onClick={handleSavePageContent} disabled={isSaving} className="bg-vakya-black text-white px-6 py-2 font-bold uppercase text-xs tracking-widest hover:bg-vakya-salmon hover:text-black">
                         {isSaving ? 'Saving...' : 'Save Page Content'}
                       </button>
                     </div>
@@ -770,8 +803,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                             <div className="flex items-center gap-3 mb-1">
                               <h3 className="font-serif text-xl">{app.applicantName}</h3>
                               <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded ${app.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                                app.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                  'bg-green-100 text-green-800'
+                                  app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                    'bg-green-100 text-green-800'
                                 }`}>{app.status}</span>
                             </div>
                             <p className="text-sm text-gray-600">Applied for <span className="font-bold">{app.jobTitle}</span> • {new Date(app.submittedAt).toLocaleDateString()}</p>

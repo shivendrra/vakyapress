@@ -45,8 +45,8 @@ const Footer: React.FC = () => {
           <span className="text-gray-700">|</span>
           <Link to="/masthead" className="hover:text-white hover:underline decoration-2 underline-offset-4">Masthead</Link>
           <span className="text-gray-700">|</span>
-          <Link to="/projects" className="hover:text-white hover:underline decoration-2 underline-offset-4">Projects</Link>
-          <span className="text-gray-700">|</span>
+          {/* <Link to="/projects" className="hover:text-white hover:underline decoration-2 underline-offset-4">Projects</Link>
+          <span className="text-gray-700">|</span> */}
           <Link to="/ethics" className="hover:text-white hover:underline decoration-2 underline-offset-4">Ethics & Guidelines</Link>
           <span className="text-gray-700">|</span>
           <Link to="/financials" className="hover:text-white hover:underline decoration-2 underline-offset-4">How we make money</Link>

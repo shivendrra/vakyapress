@@ -15,7 +15,7 @@ const StaticPage: React.FC<StaticPageProps> = ({ type, content }) => {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-serif text-5xl mb-12 pb-8 border-b border-black">{content.title}</h1>
           <MarkdownRenderer content={content.content} />
-          <p className="mt-16 text-sm text-gray-400 font-sans italic border-t border-gray-100 pt-6">Last updated: Jan 2026 • Vakya Press LLC</p>
+          <p className="mt-16 text-sm text-gray-400 font-sans italic border-t border-gray-100 pt-6">Last updated: {content.lastUpdated || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} • Vakya Press LLC</p>
         </div>
       </div>
     );
