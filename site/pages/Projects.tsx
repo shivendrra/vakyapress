@@ -83,7 +83,7 @@ const Projects: React.FC = () => {
                     <img
                       src={project.logoPlaceholder}
                       alt={project.title}
-                      className="relative z-10 w-64 h-64 object-contain drop-shadow-sm transform group-hover:scale-105 transition-transform duration-500"
+                      className="relative z-10 w-128 h-128 object-contain drop-shadow-sm transform group-hover:scale-100 transition-transform duration-500"
                     />
                   </div>
 

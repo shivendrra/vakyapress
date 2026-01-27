@@ -91,7 +91,14 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <h2 className="font-serif text-5xl">Watch</h2>
-            <button className="hidden md:block font-sans text-sm font-bold border-b border-black pb-1 hover:text-gray-600">VIEW ALL VIDEOS</button>
+            <a
+              href="https://www.youtube.com/@vakyapress"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:block font-sans text-sm font-bold border-b border-black pb-1 hover:text-gray-600"
+            >
+              VIEW ALL VIDEOS
+            </a>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
