@@ -55,6 +55,7 @@ export interface Video {
 export interface PageContent {
   title: string;
   content: string;
+  lastUpdated?: string;
 }
 
 export interface JobPosting {
@@ -81,23 +82,48 @@ export interface JobApplication {
   status: 'new' | 'reviewed' | 'shortlisted' | 'rejected';
 }
 
+export interface StaffProfile {
+  id: string; // Slug (e.g. swati-sharma)
+  name: string;
+  title: string; // e.g. Editor-in-Chief
+  department: 'Editorial' | 'Creative' | 'Production' | 'Tech' | 'Management';
+  bio: string;
+  image: string;
+  email: string;
+  socials: {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    website?: string;
+    substack?: string;
+  };
+  accessLevel: UserRole; // This controls their login permission
+}
+
 export interface SiteContent {
   videos: Video[];
   pages: Record<string, PageContent>;
   jobs: JobPosting[];
 }
 
+export interface CookiePreferences {
+  essential: boolean; // Always true
+  analytics: boolean;
+  marketing: boolean;
+  timestamp: string;
+}
+
 // Navigation Types
-export type ViewState = 
-  | 'landing' 
-  | 'articles' 
-  | 'article_detail' 
-  | 'store' 
-  | 'about' 
-  | 'contact' 
-  | 'auth' 
-  | 'admin_dashboard' 
-  | 'writer_profile' 
+export type ViewState =
+  | 'landing'
+  | 'articles'
+  | 'article_detail'
+  | 'store'
+  | 'about'
+  | 'contact'
+  | 'auth'
+  | 'admin_dashboard'
+  | 'writer_profile'
   | 'user_profile'
   | 'ethics'
   | 'financials'
