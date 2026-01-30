@@ -36,6 +36,26 @@ const formatDate = (dateInput: string | Date): string => {
     return `${day}/${month}/${year}`;
 };
 
+// Helper to convert stored date string to YYYY-MM-DD for input[type="date"]
+const dateToInputString = (dateString: string) => {
+    if (!dateString) return new Date().toISOString().split('T')[0];
+    
+    // Handle DD/MM/YYYY legacy format
+    const ddmmyyyyRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = dateString.match(ddmmyyyyRegex);
+    if (match) {
+         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         const [_, day, month, year] = match;
+         return `${year}-${month}-${day}`;
+    }
+
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+        return date.toISOString().split('T')[0];
+    }
+    return '';
+};
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteContent }) => {
     const [activeTab, setActiveTab] = useState<'articles' | 'store' | 'staff' | 'lander' | 'pages' | 'careers' | 'applications'>('articles');
     const [editingPage, setEditingPage] = useState<string | null>(null);
@@ -238,7 +258,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
             category: "Politics", // Default
             tags: [],
             imageUrl: "https://picsum.photos/800/600",
-            publishedAt: formatDate(new Date()),
+            publishedAt: new Date().toISOString().split('T')[0], // Use standard ISO YYYY-MM-DD
             featured: false
         });
     };
@@ -384,7 +404,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     };
 
     return (
-        <div className="min-h-screen bg-vakya-paper py-12 px-6">
+        <div className="min-h-screen bg-vakya-paper pb-12 pt-32 px-6">
             <div className="max-w-7xl mx-auto">
                 <header className="mb-10 flex flex-col md:flex-row justify-between items-end border-b-2 border-black pb-6">
                     <div>
@@ -464,7 +484,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="col-span-2">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Title</label>
-                                            <input className="w-full p-3 border border-gray-300 font-serif text-2xl bg-white text-black" value={editingArticle.title} onChange={e => setEditingArticle({ ...editingArticle, title: e.target.value })} />
+                                            <input className="w-full p-3 border border-gray-300 font-sans text-xl font-bold bg-white text-black" value={editingArticle.title} onChange={e => setEditingArticle({ ...editingArticle, title: e.target.value })} />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Category</label>
@@ -473,12 +493,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             </select>
                                         </div>
                                         <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Publish Date</label>
+                                            <input 
+                                                type="date" 
+                                                className="w-full p-3 border border-gray-300 bg-white text-black font-sans" 
+                                                value={dateToInputString(editingArticle.publishedAt)} 
+                                                onChange={e => setEditingArticle({ ...editingArticle, publishedAt: e.target.value })} 
+                                            />
+                                        </div>
+                                        <div>
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author (Link to Staff Profile)</label>
-                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.author} onChange={e => setEditingArticle({ ...editingArticle, author: e.target.value })} placeholder="Matches Staff Name exactly" />
+                                            <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingArticle.author} onChange={e => setEditingArticle({ ...editingArticle, author: e.target.value })} placeholder="Matches Staff Name exactly" />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>
-                                            <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingArticle.imageUrl} onChange={e => setEditingArticle({ ...editingArticle, imageUrl: e.target.value })} />
+                                            <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingArticle.imageUrl} onChange={e => setEditingArticle({ ...editingArticle, imageUrl: e.target.value })} />
                                         </div>
                                         <div className="col-span-2">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Tags</label>
@@ -486,11 +515,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                         </div>
                                         <div className="col-span-2">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Excerpt</label>
-                                            <textarea rows={2} className="w-full p-3 border border-gray-300 font-serif bg-white text-black" value={editingArticle.excerpt} onChange={e => setEditingArticle({ ...editingArticle, excerpt: e.target.value })} />
+                                            <textarea rows={2} className="w-full p-3 border border-gray-300 font-sans bg-white text-black" value={editingArticle.excerpt} onChange={e => setEditingArticle({ ...editingArticle, excerpt: e.target.value })} />
                                         </div>
                                         <div className="col-span-2">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Content (Markdown)</label>
-                                            <textarea rows={15} className="w-full p-3 border border-gray-300 font-mono text-sm bg-white text-black" value={editingArticle.content} onChange={e => setEditingArticle({ ...editingArticle, content: e.target.value })} />
+                                            <textarea rows={15} className="w-full p-3 border border-gray-300 font-sans text-sm bg-white text-black" value={editingArticle.content} onChange={e => setEditingArticle({ ...editingArticle, content: e.target.value })} />
                                         </div>
                                     </div>
                                 </div>
@@ -551,15 +580,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             <div className="grid grid-cols-2 gap-6">
                                                 <div>
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Full Name</label>
-                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.name} onChange={e => setEditingStaff({ ...editingStaff, name: e.target.value })} placeholder="Jane Doe" />
+                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.name} onChange={e => setEditingStaff({ ...editingStaff, name: e.target.value })} placeholder="Jane Doe" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Job Title</label>
-                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.title} onChange={e => setEditingStaff({ ...editingStaff, title: e.target.value })} placeholder="Senior Editor" />
+                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.title} onChange={e => setEditingStaff({ ...editingStaff, title: e.target.value })} placeholder="Senior Editor" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Department</label>
-                                                    <select className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.department} onChange={e => setEditingStaff({ ...editingStaff, department: e.target.value as any })}>
+                                                    <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.department} onChange={e => setEditingStaff({ ...editingStaff, department: e.target.value as any })}>
                                                         <option value="Editorial">Editorial</option>
                                                         <option value="Creative">Creative (Art/Video/Sound)</option>
                                                         <option value="Production">Production</option>
@@ -569,12 +598,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Profile Image URL</label>
-                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.image} onChange={e => setEditingStaff({ ...editingStaff, image: e.target.value })} />
+                                                    <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.image} onChange={e => setEditingStaff({ ...editingStaff, image: e.target.value })} />
                                                 </div>
                                             </div>
                                             <div className="mt-4">
                                                 <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Bio</label>
-                                                <textarea rows={4} className="w-full p-3 border border-gray-300 bg-white text-black font-serif" value={editingStaff.bio} onChange={e => setEditingStaff({ ...editingStaff, bio: e.target.value })} />
+                                                <textarea rows={4} className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.bio} onChange={e => setEditingStaff({ ...editingStaff, bio: e.target.value })} />
                                             </div>
                                         </div>
 
@@ -583,12 +612,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             <div className="bg-gray-50 p-4 rounded">
                                                 <div className="mb-4">
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Account Email</label>
-                                                    <input type="email" className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.email} onChange={e => setEditingStaff({ ...editingStaff, email: e.target.value })} placeholder="jane@vakyapress.com" />
+                                                    <input type="email" className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.email} onChange={e => setEditingStaff({ ...editingStaff, email: e.target.value })} placeholder="jane@vakyapress.com" />
                                                     <p className="text-xs text-gray-400 mt-1">Must match their registered login email.</p>
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Platform Role</label>
-                                                    <select className="w-full p-3 border border-gray-300 bg-white text-black" value={editingStaff.accessLevel} onChange={e => setEditingStaff({ ...editingStaff, accessLevel: e.target.value as UserRole })}>
+                                                    <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingStaff.accessLevel} onChange={e => setEditingStaff({ ...editingStaff, accessLevel: e.target.value as UserRole })}>
                                                         <option value="audience">No Access (Public Profile Only)</option>
                                                         <option value="writer">Writer (Can Create Articles)</option>
                                                         <option value="admin">Admin (Full Control)</option>
@@ -600,10 +629,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                         <div className="col-span-2 md:col-span-1 pl-4">
                                             <h4 className="font-sans font-bold uppercase tracking-widest text-sm text-gray-400 mb-4">Social Links</h4>
                                             <div className="space-y-3">
-                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Twitter URL" value={editingStaff.socials.twitter || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, twitter: e.target.value } })} />
-                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="LinkedIn URL" value={editingStaff.socials.linkedin || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, linkedin: e.target.value } })} />
-                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Website URL" value={editingStaff.socials.website || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, website: e.target.value } })} />
-                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" placeholder="Instagram URL" value={editingStaff.socials.instagram || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, instagram: e.target.value } })} />
+                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" placeholder="Twitter URL" value={editingStaff.socials.twitter || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, twitter: e.target.value } })} />
+                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" placeholder="LinkedIn URL" value={editingStaff.socials.linkedin || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, linkedin: e.target.value } })} />
+                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" placeholder="Website URL" value={editingStaff.socials.website || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, website: e.target.value } })} />
+                                                <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" placeholder="Instagram URL" value={editingStaff.socials.instagram || ''} onChange={e => setEditingStaff({ ...editingStaff, socials: { ...editingStaff.socials, instagram: e.target.value } })} />
                                             </div>
                                         </div>
                                     </div>
@@ -636,14 +665,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                 <div className="bg-white p-8 border border-gray-200">
                                     <h3 className="font-serif text-2xl mb-4">Edit Product</h3>
                                     <div className="grid grid-cols-2 gap-4 mb-4">
-                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.name} onChange={e => setEditingProduct({ ...editingProduct, name: e.target.value })} placeholder="Name" />
-                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black" type="number" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })} placeholder="Price" />
-                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.image} onChange={e => setEditingProduct({ ...editingProduct, image: e.target.value })} placeholder="Image URL" />
-                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black" value={editingProduct.category} onChange={e => setEditingProduct({ ...editingProduct, category: e.target.value })} placeholder="Category" />
-                                        <textarea className="col-span-2 block w-full p-2 border border-gray-300 bg-white text-black" rows={4} value={editingProduct.description} onChange={e => setEditingProduct({ ...editingProduct, description: e.target.value })} placeholder="Description" />
+                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black font-sans" value={editingProduct.name} onChange={e => setEditingProduct({ ...editingProduct, name: e.target.value })} placeholder="Name" />
+                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black font-sans" type="number" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })} placeholder="Price" />
+                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black font-sans" value={editingProduct.image} onChange={e => setEditingProduct({ ...editingProduct, image: e.target.value })} placeholder="Image URL" />
+                                        <input className="block w-full p-2 border border-gray-300 bg-white text-black font-sans" value={editingProduct.category} onChange={e => setEditingProduct({ ...editingProduct, category: e.target.value })} placeholder="Category" />
+                                        <textarea className="col-span-2 block w-full p-2 border border-gray-300 bg-white text-black font-sans" rows={4} value={editingProduct.description} onChange={e => setEditingProduct({ ...editingProduct, description: e.target.value })} placeholder="Description" />
                                         <div className="col-span-2">
                                             <label className="text-xs uppercase font-bold text-gray-500">Stock</label>
-                                            <input className="block w-full p-2 border border-gray-300 bg-white text-black" type="number" value={editingProduct.stock} onChange={e => setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })} />
+                                            <input className="block w-full p-2 border border-gray-300 bg-white text-black font-sans" type="number" value={editingProduct.stock} onChange={e => setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })} />
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
@@ -674,7 +703,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             <div>
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">YouTube URL</label>
                                                 <div className="flex gap-2">
-                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.url} onChange={e => handleVideoChange(video.id, 'url', e.target.value)} />
+                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" value={video.url} onChange={e => handleVideoChange(video.id, 'url', e.target.value)} />
                                                     <button onClick={() => autoFetchVideoDetails(video.id, video.url)} className="bg-gray-100 p-2 hover:bg-gray-200" title="Auto-fill details">
                                                         {fetchingVideoId === video.id ? '...' : 'AI'}
                                                     </button>
@@ -682,16 +711,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Title</label>
-                                                <input className="w-full p-2 border border-gray-300 text-sm font-bold bg-white text-black" value={video.title} onChange={e => handleVideoChange(video.id, 'title', e.target.value)} />
+                                                <input className="w-full p-2 border border-gray-300 text-sm font-bold bg-white text-black font-sans" value={video.title} onChange={e => handleVideoChange(video.id, 'title', e.target.value)} />
                                             </div>
                                             <div className="flex gap-2">
                                                 <div className="w-1/2">
                                                     <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Duration</label>
-                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.duration} onChange={e => handleVideoChange(video.id, 'duration', e.target.value)} />
+                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" value={video.duration} onChange={e => handleVideoChange(video.id, 'duration', e.target.value)} />
                                                 </div>
                                                 <div className="w-1/2">
                                                     <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Type</label>
-                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black" value={video.type} onChange={e => handleVideoChange(video.id, 'type', e.target.value)} />
+                                                    <input className="w-full p-2 border border-gray-300 text-sm bg-white text-black font-sans" value={video.type} onChange={e => handleVideoChange(video.id, 'type', e.target.value)} />
                                                 </div>
                                             </div>
                                         </div>
@@ -728,7 +757,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                         <div className="mb-6">
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Page Title</label>
                                             <input 
-                                                className="w-full p-3 border border-gray-300 font-serif text-2xl bg-white text-black" 
+                                                className="w-full p-3 border border-gray-300 font-sans text-xl font-bold bg-white text-black" 
                                                 value={siteContent.pages[editingPage].title} 
                                                 onChange={e => handlePageContentChange(editingPage, 'title', e.target.value)} 
                                             />
@@ -736,7 +765,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                         <div>
                                             <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Content (Markdown)</label>
                                             <textarea 
-                                                className="w-full p-4 border border-gray-300 font-mono text-sm h-[500px] bg-white text-black" 
+                                                className="w-full p-4 border border-gray-300 font-sans text-sm h-[500px] bg-white text-black" 
                                                 value={siteContent.pages[editingPage].content} 
                                                 onChange={e => handlePageContentChange(editingPage, 'content', e.target.value)} 
                                             />
@@ -769,29 +798,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
                                         <div className="grid md:grid-cols-2 gap-6 mb-4">
                                             <div className="col-span-2">
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Job Title</label>
-                                                <input className="w-full p-2 border border-gray-300 font-serif text-xl bg-white text-black" value={job.title} onChange={e => handleJobChange(job.id, 'title', e.target.value)} />
+                                                <input className="w-full p-2 border border-gray-300 font-sans text-lg bg-white text-black" value={job.title} onChange={e => handleJobChange(job.id, 'title', e.target.value)} />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Location</label>
-                                                <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.location} onChange={e => handleJobChange(job.id, 'location', e.target.value)} />
+                                                <input className="w-full p-2 border border-gray-300 bg-white text-black font-sans" value={job.location} onChange={e => handleJobChange(job.id, 'location', e.target.value)} />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Type</label>
-                                                <select className="w-full p-2 border border-gray-300 bg-white text-black" value={job.type} onChange={e => handleJobChange(job.id, 'type', e.target.value as any)}>
+                                                <select className="w-full p-2 border border-gray-300 bg-white text-black font-sans" value={job.type} onChange={e => handleJobChange(job.id, 'type', e.target.value as any)}>
                                                     <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option>
                                                 </select>
                                             </div>
                                             <div className="col-span-2">
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Short Description</label>
-                                                <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.shortDescription} onChange={e => handleJobChange(job.id, 'shortDescription', e.target.value)} />
+                                                <input className="w-full p-2 border border-gray-300 bg-white text-black font-sans" value={job.shortDescription} onChange={e => handleJobChange(job.id, 'shortDescription', e.target.value)} />
                                             </div>
                                             <div className="col-span-2">
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Required Skills (Comma separated)</label>
-                                                <input className="w-full p-2 border border-gray-300 bg-white text-black" value={job.skills} onChange={e => handleJobChange(job.id, 'skills', e.target.value)} />
+                                                <input className="w-full p-2 border border-gray-300 bg-white text-black font-sans" value={job.skills} onChange={e => handleJobChange(job.id, 'skills', e.target.value)} />
                                             </div>
                                             <div className="col-span-2">
                                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Full Description (Markdown)</label>
-                                                <textarea rows={6} className="w-full p-2 border border-gray-300 font-mono text-sm bg-white text-black" value={job.longDescription} onChange={e => handleJobChange(job.id, 'longDescription', e.target.value)} />
+                                                <textarea rows={6} className="w-full p-2 border border-gray-300 font-sans text-sm bg-white text-black" value={job.longDescription} onChange={e => handleJobChange(job.id, 'longDescription', e.target.value)} />
                                             </div>
                                         </div>
                                         <button onClick={() => setSiteContent(prev => ({...prev, jobs: prev.jobs.filter(j => j.id !== job.id)}))} className="text-red-600 text-xs font-bold uppercase hover:underline">Delete Position</button>

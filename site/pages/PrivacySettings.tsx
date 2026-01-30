@@ -41,7 +41,7 @@ const PrivacySettings: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-vakya-paper py-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-vakya-paper pb-24 pt-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white border border-gray-200 p-8 md:p-12 shadow-sm">
         <h1 className="font-serif text-5xl mb-6">Privacy Settings</h1>
         <p className="font-sans text-lg text-gray-600 mb-12 leading-relaxed">

@@ -7,7 +7,7 @@ interface UserProfileProps {
 
 const UserProfilePage: React.FC<UserProfileProps> = ({ user }) => {
     return (
-        <div className="min-h-screen bg-vakya-paper py-12 px-4">
+        <div className="min-h-screen bg-vakya-paper pb-12 pt-32 px-4">
             <div className="max-w-2xl mx-auto bg-white p-8 border border-gray-200 shadow-sm">
                 <h1 className="font-serif text-3xl mb-8 border-b border-gray-200 pb-4">Account Settings</h1>
                 

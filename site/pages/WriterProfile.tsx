@@ -25,9 +25,9 @@ const WriterProfile: React.FC<WriterProfileProps> = ({ user }) => {
     const myArticles = MOCK_ARTICLES.slice(0, 2); 
 
     return (
-        <div className="min-h-screen bg-vakya-paper">
+        <div className="min-h-screen bg-vakya-paper pt-20 md:pt-24">
              {/* Profile Header */}
-             <div className="bg-white border-b border-black/10 py-20 px-4">
+             <div className="bg-white border-b border-black/10 py-12 px-4">
                 <div className="max-w-5xl mx-auto">
                     <div className="flex flex-col md:flex-row gap-12 items-start">
                         {/* Avatar */}

@@ -48,7 +48,7 @@ const Projects: React.FC = () => {
     <div className="min-h-screen bg-vakya-paper">
       
       {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4 border-b border-black/5">
+      <section className="pt-32 pb-12 px-4 border-b border-black/5">
         <div className="max-w-7xl mx-auto text-center">
           <p className="font-sans text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 animate-fade-in-up">
             Vakya Productions

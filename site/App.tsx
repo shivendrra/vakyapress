@@ -83,11 +83,11 @@ const App: React.FC = () => {
   }, []);
 
   if (loadingUser) {
-      return <div className="min-h-screen flex items-center justify-center bg-vakya-paper font-serif text-2xl">Loading Vakya...</div>;
+      return <div className="min-h-screen flex items-center justify-center bg-white font-serif text-2xl">Loading Vakya...</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-vakya-paper">
+    <div className="min-h-screen flex flex-col bg-white">
       <ScrollToTop />
       <Navbar user={user} />
       <main className="flex-grow">

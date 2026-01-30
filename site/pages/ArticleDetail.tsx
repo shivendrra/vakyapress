@@ -143,8 +143,8 @@ const ArticleDetail: React.FC = () => {
                   </div>
               </div>
 
-              {/* Reader Content */}
-              <div className={`max-w-2xl mx-auto pt-32 pb-24 px-6 animate-fade-in-up ${getFontSizeClass()}`}>
+              {/* Reader Content - Widened to max-w-3xl */}
+              <div className={`max-w-3xl mx-auto pt-32 pb-24 px-6 animate-fade-in-up ${getFontSizeClass()}`}>
                   <h1 className="font-serif text-5xl md:text-6xl mb-8 leading-tight">{article.title}</h1>
                   <div className="flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest opacity-50 mb-12 border-b border-current pb-6">
                       <span>{article.author}</span>
@@ -165,86 +165,120 @@ const ArticleDetail: React.FC = () => {
 
   // STANDARD LAYOUT
   return (
-    <article className="min-h-screen bg-white pb-24">
-      {/* Article Header Image - Full width */}
-      <div className="w-full h-[60vh] md:h-[70vh] relative overflow-hidden">
-        <img src={article.imageUrl} className="w-full h-full object-cover" alt="Cover" />
-        <div className="absolute inset-0 bg-black/30"></div>
-        <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
-          <div className="max-w-3xl mx-auto text-white">
-            <span className="bg-vakya-accent text-vakya-black px-3 py-1 font-sans text-xs font-bold uppercase tracking-widest mb-4 inline-block">
-              {article.category}
-            </span>
-            <h1 className="font-serif text-5xl md:text-7xl leading-tight mb-4 drop-shadow-md">
-              {article.title}
-            </h1>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 bg-white pt-10 rounded-t-lg shadow-sm">
-        {/* Meta & Actions */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-8 mb-8">
-           <div className="flex items-center gap-4">
-              <Link to={`/staff/${getAuthorSlug(article.author)}`}>
-                  <img src={article.authorImage || `https://ui-avatars.com/api/?name=${article.author}`} className="w-12 h-12 rounded-full border border-gray-200 hover:border-black transition-colors" alt="Author" />
-              </Link>
-              <div>
-                <Link to={`/staff/${getAuthorSlug(article.author)}`} className="font-sans font-bold text-gray-900 hover:text-vakya-salmon transition-colors">By {article.author}</Link>
-                <p className="font-sans text-sm text-gray-500">{formatDate(article.publishedAt)}</p>
-              </div>
-           </div>
-           
-           <div className="flex items-center gap-4">
-               <button 
-                 onClick={() => setIsReaderMode(true)}
-                 className="flex items-center gap-2 bg-gray-100 hover:bg-black hover:text-white px-4 py-2 rounded-full transition-colors font-sans text-xs font-bold uppercase tracking-widest group"
-               >
-                   <svg className="w-4 h-4 text-gray-500 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                   Reader Mode
-               </button>
-               <button onClick={() => navigate('/articles')} className="text-gray-400 hover:text-black font-sans text-sm font-bold uppercase">Back</button>
-           </div>
-        </div>
-
-        {/* Content Body */}
-        <div className="text-gray-800">
-          <p className="lead text-xl md:text-2xl font-serif italic text-gray-600 mb-8 border-l-4 border-vakya-accent pl-6 py-1 leading-relaxed">
-            {article.subtitle || article.excerpt}
-          </p>
-          
-          <MarkdownRenderer content={article.content} />
+    <article className="min-h-screen bg-white pt-20 md:pt-24">
+      {/* 1. Hero with Overlay */}
+      <div className="relative w-full h-[70vh] flex items-end pb-12">
+        <div className="absolute inset-0">
+             <img src={article.imageUrl} className="w-full h-full object-cover" alt="Cover" />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
         </div>
         
-        {/* Footer of article */}
-        <div className="mt-16 pt-8 border-t border-gray-200">
-           <h3 className="font-sans font-bold uppercase text-sm text-gray-400 mb-4">Tags</h3>
-           <div className="flex flex-wrap gap-2">
-             {/* If article has tags, display them. Otherwise fallback to just Journalism + Category */}
-             {(article.tags && article.tags.length > 0 ? article.tags : ['Journalism', article.category]).map(tag => (
-               <span key={tag} className="bg-gray-100 text-gray-600 px-3 py-1 rounded text-xs font-sans uppercase hover:bg-gray-200 cursor-pointer">{tag}</span>
-             ))}
-           </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-4xl">
+                 <div className="flex items-center gap-3 mb-6">
+                    <span className="bg-vakya-accent text-vakya-black px-3 py-1 font-sans text-xs font-bold uppercase tracking-widest">
+                    {article.category}
+                    </span>
+                    <span className="text-white/80 font-sans text-xs font-bold uppercase tracking-widest">
+                        Updated {formatDate(article.publishedAt)}
+                    </span>
+                 </div>
+                 <h1 className="font-serif text-5xl md:text-7xl text-white leading-tight mb-6 drop-shadow-lg">
+                    {article.title}
+                 </h1>
+                 <p className="font-serif text-xl md:text-2xl text-white/90 leading-relaxed max-w-2xl">
+                    {article.subtitle || article.excerpt}
+                 </p>
+            </div>
         </div>
       </div>
 
-      {/* Related Articles */}
-      <section className="bg-vakya-gray/30 mt-24 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="font-serif text-3xl mb-8">Read Next</h3>
-            <div className="grid md:grid-cols-3 gap-8">
-                {relatedArticles.map(related => (
-                    <div key={related.id} onClick={() => navigate(`/articles/${related.id}`)} className="group cursor-pointer bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="aspect-video overflow-hidden mb-4 bg-gray-200">
-                            <img src={related.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={related.title} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            {/* LEFT: Main Content (8 cols) */}
+            <div className="lg:col-span-8">
+                 <div className="font-serif text-lg text-gray-800 leading-relaxed">
+                    <MarkdownRenderer content={article.content} />
+                 </div>
+                 
+                 {/* Article Footer (Tags etc) */}
+                 <div className="mt-12 pt-8 border-t border-gray-100">
+                     <div className="flex flex-wrap gap-2">
+                         {(article.tags || [article.category]).map(tag => (
+                             <span key={tag} className="bg-gray-100 text-gray-600 px-3 py-1 text-xs font-bold uppercase hover:bg-gray-200 cursor-pointer">{tag}</span>
+                         ))}
+                     </div>
+                 </div>
+            </div>
+
+            {/* RIGHT: Sidebar (4 cols) */}
+            <div className="lg:col-span-4 space-y-12">
+                
+                {/* Author Card */}
+                <div className="bg-gray-50 p-6 md:p-8 rounded-xl border border-gray-100 sticky top-32">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="relative">
+                            <div className="absolute -inset-1 bg-vakya-accent rounded-full blur opacity-20"></div>
+                             <Link to={`/staff/${getAuthorSlug(article.author)}`}>
+                                <img src={article.authorImage || `https://ui-avatars.com/api/?name=${article.author}`} className="w-16 h-16 rounded-full object-cover relative border-2 border-white shadow-sm" alt={article.author} />
+                            </Link>
                         </div>
-                        <span className="text-xs font-bold font-sans text-vakya-salmon uppercase tracking-widest">{related.category}</span>
-                        <h4 className="font-serif text-xl mt-2 leading-tight group-hover:underline decoration-1 underline-offset-4">{related.title}</h4>
+                        <div>
+                             <h3 className="font-serif text-xl leading-none mb-1">
+                                <Link to={`/staff/${getAuthorSlug(article.author)}`} className="hover:underline">{article.author}</Link>
+                             </h3>
+                             <p className="font-sans text-xs font-bold text-gray-400 uppercase tracking-widest">Writer at Vakya</p>
+                        </div>
                     </div>
-                ))}
+                    
+                    <p className="font-sans text-sm text-gray-600 mb-6 leading-relaxed">
+                        Journalist covering {article.category.toLowerCase()} and human interest stories. Believes in the power of unhurried reporting.
+                    </p>
+                    
+                    <div className="flex gap-3 mb-8">
+                        <button className="flex-1 bg-black text-white py-2 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors">Follow</button>
+                         <button onClick={() => navigate(`/staff/${getAuthorSlug(article.author)}`)} className="flex-1 border border-black text-black py-2 text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors">Profile</button>
+                    </div>
+
+                    {/* Reader Settings in Sidebar */}
+                    <div className="border-t border-gray-200 pt-6">
+                        <h4 className="font-sans text-xs font-bold uppercase text-gray-400 mb-4">Reading Options</h4>
+                        <button 
+                            onClick={() => setIsReaderMode(true)}
+                            className="w-full flex items-center justify-between p-3 bg-white border border-gray-200 hover:border-black transition-colors group"
+                        >
+                            <span className="text-sm font-bold">Reader View</span>
+                            <svg className="w-4 h-4 text-gray-400 group-hover:text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Related Articles List (Sidebar Style) */}
+                <div>
+                    <h3 className="font-serif text-2xl mb-6">Related Stories</h3>
+                    <div className="space-y-6">
+                        {relatedArticles.map(related => (
+                            <div key={related.id} onClick={() => navigate(`/articles/${related.id}`)} className="flex gap-4 cursor-pointer group">
+                                <div className="w-24 h-24 flex-shrink-0 bg-gray-200 overflow-hidden rounded-md">
+                                    <img src={related.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={related.title} />
+                                </div>
+                                <div>
+                                    <span className="font-sans text-[10px] font-bold text-vakya-salmon uppercase tracking-widest mb-1 block">{related.category}</span>
+                                    <h4 className="font-serif text-lg leading-tight group-hover:underline decoration-1 underline-offset-4 line-clamp-2">{related.title}</h4>
+                                </div>
+                            </div>
+                        ))}
+                        {relatedArticles.length === 0 && <p className="text-gray-400 text-sm">No related stories found.</p>}
+                    </div>
+                    <Link to="/articles" className="inline-block mt-6 text-xs font-bold uppercase tracking-widest hover:text-vakya-salmon">
+                        View All Archives &rarr;
+                    </Link>
+                </div>
+
             </div>
         </div>
-      </section>
+      </div>
     </article>
   );
 };

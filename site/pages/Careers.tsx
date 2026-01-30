@@ -71,7 +71,7 @@ const Careers: React.FC<CareersProps> = ({ jobs }) => {
     };
 
     return (
-        <div className="min-h-screen bg-vakya-paper">
+        <div className="min-h-screen bg-vakya-paper pt-20 md:pt-24">
             {/* Hero */}
             <div className="bg-vakya-black text-white py-24 px-4">
                 <div className="max-w-4xl mx-auto text-center">
