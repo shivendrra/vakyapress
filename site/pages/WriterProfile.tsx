@@ -6,6 +6,20 @@ interface WriterProfileProps {
     user: UserProfile;
 }
 
+const formatDate = (dateInput: string | Date): string => {
+    if (!dateInput) return '';
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) {
+      return String(dateInput);
+    }
+  
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+};
+
 const WriterProfile: React.FC<WriterProfileProps> = ({ user }) => {
     // Filter articles for "My Articles" (mocked)
     const myArticles = MOCK_ARTICLES.slice(0, 2); 
@@ -80,7 +94,7 @@ const WriterProfile: React.FC<WriterProfileProps> = ({ user }) => {
                             <div className="md:col-span-3 flex flex-col h-full border-b border-gray-200 pb-8 md:border-none md:pb-0">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="font-sans text-xs font-bold text-vakya-salmon uppercase tracking-widest">{article.category}</span>
-                                    <span className="font-sans text-xs text-gray-400">{article.publishedAt}</span>
+                                    <span className="font-sans text-xs text-gray-400">{formatDate(article.publishedAt)}</span>
                                 </div>
                                 <h3 className="font-serif text-3xl mb-3 group-hover:underline decoration-1 underline-offset-4 leading-tight">{article.title}</h3>
                                 <p className="font-sans text-gray-600 mb-4 leading-relaxed">{article.excerpt}</p>

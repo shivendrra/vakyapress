@@ -26,10 +26,10 @@ export const saveCookiePreferences = (prefs: Omit<CookiePreferences, 'timestamp'
     timestamp: new Date().toISOString(),
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(fullPrefs));
-
+  
   // Trigger an event so components can react (like the settings page)
   window.dispatchEvent(new Event('cookie-prefs-changed'));
-
+  
   // Here is where you would initialize scripts based on preferences
   applyConsent(fullPrefs);
 };

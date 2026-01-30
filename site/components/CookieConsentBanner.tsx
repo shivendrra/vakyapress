@@ -32,25 +32,25 @@ const CookieConsentBanner: React.FC = () => {
         <div className="max-w-3xl">
           <h3 className="font-serif text-2xl mb-2">We value your privacy.</h3>
           <p className="font-sans text-sm text-gray-600 leading-relaxed">
-            We use cookies to enhance your experience, analyze site traffic, and support our independent journalism.
-            You can choose to accept all cookies or manage them individually.
+            We use cookies to enhance your experience, analyze site traffic, and support our independent journalism. 
+            You can choose to accept all cookies or manage them individually. 
             Read our <Link to="/cookie-policy" className="underline font-bold hover:text-vakya-salmon">Cookie Policy</Link>.
           </p>
         </div>
-
+        
         <div className="flex flex-col sm:flex-row gap-3 min-w-max">
-          <button
-            onClick={handleRejectNonEssential}
-            className="px-6 py-3 border border-gray-300 text-gray-700 font-sans text-xs font-bold uppercase tracking-widest hover:border-black hover:text-black transition-colors"
-          >
-            Essential Only
-          </button>
-          <button
-            onClick={handleAcceptAll}
-            className="px-6 py-3 bg-vakya-black text-white font-sans text-xs font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
-          >
-            Accept All
-          </button>
+            <button 
+                onClick={handleRejectNonEssential}
+                className="px-6 py-3 border border-gray-300 text-gray-700 font-sans text-xs font-bold uppercase tracking-widest hover:border-black hover:text-black transition-colors"
+            >
+                Essential Only
+            </button>
+            <button 
+                onClick={handleAcceptAll}
+                className="px-6 py-3 bg-vakya-black text-white font-sans text-xs font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
+            >
+                Accept All
+            </button>
         </div>
       </div>
     </div>
