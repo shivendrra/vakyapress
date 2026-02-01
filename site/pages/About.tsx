@@ -27,7 +27,7 @@ const TEAM: TeamMember[] = [
     fullBio: "Shivendra, an engineer and designer, has ideated and developed innovative solutions for real-world challenges. He collaborated with the Government of India to deploy Cattlesense among rural communities, showcasing deep technical business expertise. He co-founded Vakya with Prasoon Singh during his final year of school.",
     email: "shivendrra@vakyapress.com",
     image: "https://2.gravatar.com/avatar/a5fa5ebfdaa5c691a8a186aa09151aec1307f02fb476ffb60241dd6ae009e05b?size=512&d=initials",
-    bgColor: "bg-vakya-accent"
+    bgColor: "bg-blue-200"
   },
   {
     name: "Praduymna Kumar",
@@ -35,8 +35,8 @@ const TEAM: TeamMember[] = [
     bio: "Law-Apprentice, Writer proficient with legal aspect of business helping building startups.",
     fullBio: "Pradyumna, a Law undergraduate from Delhi University, harbors a keen interest in law and order. With internships at the Supreme Court honing his expertise, he heads Vakya's research and writing division while serving as business liaison.",
     email: "pradyumn@vakyapress.com",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop",
-    bgColor: "bg-blue-200"
+    image: "https://2.gravatar.com/avatar/8234b51b38be69717a41a0088cde2f08743bd5f53925a81b22f828b04b4065fe?size=512&d=initials",
+    bgColor: "bg-vakya-accent"
   },
   {
     name: "Aakash Prakhar",
