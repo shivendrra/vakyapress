@@ -44,7 +44,7 @@ const TEAM: TeamMember[] = [
     bio: "Product Designer and passionate animator shaping the frames that matter.",
     fullBio: "A product designer turned animator, Aakash is an artist at heart, renowned for his exceptional sense of color and aesthetics. As creative lead, he spearheads animation, design, and editing. He has also given back to the community through gigs painting interiors for primary schools & teaching kids.",
     email: "aakash@vakyapress.com",
-    image: "https://media.licdn.com/dms/image/v2/D4E03AQHXphx90IjGhQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1720625753281?e=1770854400&v=beta&t=TD-kCdcxGfnhbnxeXcBJ6EO_TGQH_EVLH5aY4wi8sDk",
+    image: "https://0.gravatar.com/avatar/46a7a3f0138509098000b129cc8b17875eee975f234af333c8a06a981559bafa?size=512&d=initials",
     bgColor: "bg-green-200"
   },
 ];
