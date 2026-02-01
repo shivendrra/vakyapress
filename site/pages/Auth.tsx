@@ -86,7 +86,7 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-vakya-paper py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[80vh] flex items-center justify-center bg-vakya-paper pb-12 pt-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 shadow-xl border border-gray-100">
         <div className="text-center">
           <h2 className="font-serif text-4xl font-bold text-gray-900">

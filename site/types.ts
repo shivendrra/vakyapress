@@ -1,3 +1,4 @@
+
 export interface Article {
   id: string;
   title: string;
@@ -114,16 +115,16 @@ export interface CookiePreferences {
 }
 
 // Navigation Types
-export type ViewState =
-  | 'landing'
-  | 'articles'
-  | 'article_detail'
-  | 'store'
-  | 'about'
-  | 'contact'
-  | 'auth'
-  | 'admin_dashboard'
-  | 'writer_profile'
+export type ViewState = 
+  | 'landing' 
+  | 'articles' 
+  | 'article_detail' 
+  | 'store' 
+  | 'about' 
+  | 'contact' 
+  | 'auth' 
+  | 'admin_dashboard' 
+  | 'writer_profile' 
   | 'user_profile'
   | 'ethics'
   | 'financials'

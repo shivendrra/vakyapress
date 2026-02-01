@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MarkdownRendererProps {
   content: string;
@@ -10,6 +11,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className 
   return (
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           h1: ({ node, ...props }) => <h1 className="font-serif text-4xl md:text-5xl mb-6 mt-12 leading-tight font-normal" {...props} />,
           h2: ({ node, ...props }) => <h2 className="font-serif text-3xl md:text-4xl mb-4 mt-10 leading-tight font-normal" {...props} />,
@@ -38,7 +40,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className 
             // React Markdown passes no special prop to distinguish, but the DOM structure differs.
             // We'll style the inline code here. If it's a block, it's wrapped in 'pre' which we styled above.
             return <code className="bg-gray-200 text-red-700 px-1.5 py-0.5 rounded font-mono text-sm font-medium" {...props} />
-          }
+          },
+          // Table Support
+          table: ({ node, ...props }) => <div className="overflow-x-auto my-8"><table className="w-full border-collapse border border-gray-200 text-sm font-sans" {...props} /></div>,
+          thead: ({ node, ...props }) => <thead className="bg-gray-50 border-b border-gray-200" {...props} />,
+          tbody: ({ node, ...props }) => <tbody className="divide-y divide-gray-100" {...props} />,
+          tr: ({ node, ...props }) => <tr className="hover:bg-gray-50 transition-colors" {...props} />,
+          th: ({ node, ...props }) => <th className="px-4 py-3 text-left font-bold uppercase tracking-wider text-gray-500 text-xs" {...props} />,
+          td: ({ node, ...props }) => <td className="px-4 py-3 text-gray-700 border-r border-gray-100 last:border-0 align-top" {...props} />,
         }}
       >
         {content}

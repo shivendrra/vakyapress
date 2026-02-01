@@ -46,7 +46,7 @@ const App: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
-
+  
   // Site Content State (Lifted up for Admin Editing)
   const [siteContent, setSiteContent] = useState<SiteContent>(INITIAL_CONTENT);
 
@@ -56,13 +56,13 @@ const App: React.FC = () => {
     initializeCookies();
 
     const fetchData = async () => {
-      const fetchedArticles = await getArticles();
-      setArticles(fetchedArticles);
+        const fetchedArticles = await getArticles();
+        setArticles(fetchedArticles);
 
-      const storedContent = await getSiteContent();
-      if (storedContent) {
-        setSiteContent(storedContent);
-      }
+        const storedContent = await getSiteContent();
+        if (storedContent) {
+            setSiteContent(storedContent);
+        }
     };
     fetchData();
   }, []);
@@ -83,11 +83,11 @@ const App: React.FC = () => {
   }, []);
 
   if (loadingUser) {
-    return <div className="min-h-screen flex items-center justify-center bg-vakya-paper font-serif text-2xl">Loading Vakya...</div>;
+      return <div className="min-h-screen flex items-center justify-center bg-white font-serif text-2xl">Loading Vakya...</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-vakya-paper">
+    <div className="min-h-screen flex flex-col bg-white">
       <ScrollToTop />
       <Navbar user={user} />
       <main className="flex-grow">
@@ -103,7 +103,7 @@ const App: React.FC = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/careers" element={<Careers jobs={siteContent.jobs} />} />
-
+          
           {/* Static Pages */}
           <Route path="/privacy" element={<StaticPage type="privacy" content={siteContent.pages?.privacy} />} />
           <Route path="/terms" element={<StaticPage type="terms" content={siteContent.pages?.terms} />} />
@@ -118,19 +118,19 @@ const App: React.FC = () => {
           <Route path="/privacy-settings" element={<PrivacySettings />} />
 
           {/* Protected Routes */}
-          <Route
-            path="/admin"
-            element={user?.role === 'admin' ? <AdminDashboard siteContent={siteContent} setSiteContent={setSiteContent} /> : <Navigate to="/auth" />}
+          <Route 
+            path="/admin" 
+            element={user?.role === 'admin' ? <AdminDashboard siteContent={siteContent} setSiteContent={setSiteContent} /> : <Navigate to="/auth" />} 
           />
-          <Route
-            path="/writer"
-            element={user?.role === 'writer' ? <WriterProfile user={user} /> : <Navigate to="/auth" />}
+          <Route 
+            path="/writer" 
+            element={user?.role === 'writer' ? <WriterProfile user={user} /> : <Navigate to="/auth" />} 
           />
-          <Route
-            path="/profile"
-            element={user ? <UserProfilePage user={user} /> : <Navigate to="/auth" />}
+           <Route 
+            path="/profile" 
+            element={user ? <UserProfilePage user={user} /> : <Navigate to="/auth" />} 
           />
-
+          
           {/* Catch all - 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -10,9 +10,22 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isLandingPage = location.pathname === '/';
+
+  // Scroll detection
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -35,7 +48,6 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const navLinks: { label: string; path: string }[] = [
     { label: 'Articles', path: '/articles' },
-    // { label: 'Projects', path: '/projects' },
     { label: 'Store', path: '/store' },
     { label: 'About', path: '/about' },
     { label: 'Contact', path: '/contact' },
@@ -43,18 +55,33 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Determine styles based on state
+  const isTransparent = isLandingPage && !isScrolled;
+  const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    isTransparent 
+      ? 'bg-transparent border-transparent py-4' 
+      : 'bg-white/95 backdrop-blur-md border-b border-black/5 py-0 shadow-sm'
+  }`;
+  
+  const textColorClass = isTransparent ? 'text-white' : 'text-gray-800';
+  const logoFilter = isTransparent ? 'brightness(0) invert(1)' : 'none';
+  const buttonClass = isTransparent 
+    ? 'bg-white text-vakya-black hover:bg-gray-200' 
+    : 'bg-vakya-black text-white hover:bg-gray-800';
+
   return (
-    <nav className="sticky top-0 z-50 bg-vakya-paper/95 backdrop-blur-sm border-b border-black/5">
+    <nav className={navbarClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-28">
+        <div className="flex justify-between items-center h-20 md:h-24">
 
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-28 h-28 relative">
+            <div className="w-24 h-24 md:w-28 md:h-28 relative flex items-center">
               <img
                 src="https://raw.githubusercontent.com/shivendrra/vakypress/dev/assets/VakyaLogo7.png"
                 alt="Vakya"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain transition-all duration-300"
+                style={{ filter: logoFilter }}
               />
             </div>
           </div>
@@ -65,21 +92,25 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               <Link
                 key={link.label}
                 to={link.path}
-                className={`font-sans text-sm uppercase tracking-widest hover:text-gray-600 transition-colors ${isActive(link.path) ? 'font-bold border-b-2 border-black' : 'text-gray-800'}`}
+                className={`font-sans text-sm uppercase tracking-widest transition-colors ${
+                    isActive(link.path) 
+                        ? (isTransparent ? 'font-bold text-white border-b-2 border-white' : 'font-bold text-black border-b-2 border-black') 
+                        : (isTransparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-black')
+                }`}
               >
                 {link.label}
               </Link>
             ))}
 
             {/* User Dropdown or Login Button */}
-            <div className="ml-4 border-l border-gray-200 pl-8">
+            <div className={`ml-4 border-l pl-8 ${isTransparent ? 'border-white/30' : 'border-gray-200'}`}>
               {user ? (
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    className="flex items-center gap-2 font-sans font-bold text-sm uppercase tracking-widest hover:text-gray-600 transition-colors focus:outline-none"
+                    className={`flex items-center gap-2 font-sans font-bold text-sm uppercase tracking-widest transition-colors focus:outline-none ${textColorClass}`}
                   >
-                    <div className="w-8 h-8 bg-vakya-black text-white rounded-full flex items-center justify-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isTransparent ? 'bg-white text-vakya-black' : 'bg-vakya-black text-white'}`}>
                       {user.displayName ? user.displayName[0].toUpperCase() : 'U'}
                     </div>
                     <span>{user.displayName}</span>
@@ -88,18 +119,18 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
                   {/* Dropdown Menu */}
                   {isProfileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg border border-gray-100 rounded-md py-1 animate-fade-in z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg border border-gray-100 rounded-md py-1 animate-fade-in z-50 text-gray-800">
                       {user.role === 'admin' && (
-                        <Link to="/admin" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-sans">
+                        <Link to="/admin" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 font-sans">
                           Dashboard
                         </Link>
                       )}
                       {user.role === 'writer' && (
-                        <Link to="/writer" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-sans">
+                        <Link to="/writer" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 font-sans">
                           Author Profile
                         </Link>
                       )}
-                      <Link to="/profile" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 font-sans">
+                      <Link to="/profile" onClick={() => setIsProfileDropdownOpen(false)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 font-sans">
                         Account Settings
                       </Link>
                       <div className="border-t border-gray-100 my-1"></div>
@@ -112,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               ) : (
                 <Link
                   to="/auth"
-                  className="bg-vakya-black text-white px-5 py-2 font-sans text-sm uppercase tracking-widest hover:bg-gray-800 transition-colors"
+                  className={`px-5 py-2 font-sans text-sm uppercase tracking-widest transition-colors ${buttonClass}`}
                 >
                   Log In
                 </Link>
@@ -124,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-800 hover:text-black focus:outline-none"
+              className={`${textColorClass} focus:outline-none`}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
@@ -140,14 +171,14 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-vakya-paper border-b border-gray-200">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-black">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.path}
                 onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-left px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-100 font-sans"
+                className="block w-full text-left px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-100 font-sans uppercase tracking-widest"
               >
                 {link.label}
               </Link>
@@ -157,7 +188,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
                 <Link
                   to="/auth"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-vakya-black font-sans bg-vakya-gray"
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-vakya-black font-sans bg-gray-50"
                 >
                   Login / Signup
                 </Link>

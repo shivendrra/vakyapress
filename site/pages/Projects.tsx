@@ -14,25 +14,25 @@ const PROJECTS: Project[] = [
   {
     id: 'spectacle',
     title: 'Spectacle',
-    description: '(Planned) A quarterly magazine exploring society, photography, art, and culture. Centered on the human experience in nature and travel—akin to the spirit of National Geographic but with a raw, indie soul. Curated and run entirely by contributions from independent photographers around the world and designers at Vakya. Fully hand-crafted, with zero AI involvement.',
+    description: 'A quarterly magazine exploring society, photography, art, and culture. Centered on the human experience in nature and travel—akin to the spirit of National Geographic but with a raw, indie soul. Curated and run entirely by contributions from independent photographers around the world and designers at Vakya. Fully hand-crafted, with zero AI involvement.',
     link: '#',
-    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/IndieSpectacleLogo.png',
+    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Spectacle&font=playfair-display', 
     accentColor: 'bg-vakya-salmon'
   },
   {
     id: 'draft-four',
     title: 'Draft-Four',
-    description: '(Planned) A film production collective that began as an independent passion project to produce a single short film. Today, it stands as a home for experimental storytellers, producing visual narratives that challenge the conventional structures of cinema and documentary filmmaking.',
+    description: 'A film production collective that began as an independent passion project to produce a single short film. Today, it stands as a home for experimental storytellers, producing visual narratives that challenge the conventional structures of cinema and documentary filmmaking.',
     link: '#',
-    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/DraftFour.png',
+    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Draft-Four&font=monospace',
     accentColor: 'bg-vakya-accent'
   },
   {
     id: 'vyakul',
     title: 'Vyakul',
-    description: '(Planned) An educational outreach program dedicated to bridging the opportunity gap. Vyakul works directly with rural schools to provide quality education resources, mentorship, and digital literacy tools to underprivileged children, ensuring that talent is not lost to circumstance.',
+    description: 'An educational outreach program dedicated to bridging the opportunity gap. Vyakul works directly with rural schools to provide quality education resources, mentorship, and digital literacy tools to underprivileged children, ensuring that talent is not lost to circumstance.',
     link: '#',
-    logoPlaceholder: 'https://raw.githubusercontent.com/shivendrra/vakyapress/dev/assets/Vyakul.png',
+    logoPlaceholder: 'https://placehold.co/400x400/transparent/121212?text=Vyakul&font=roboto',
     accentColor: 'bg-vakya-lavender'
   }
 ];
@@ -46,9 +46,9 @@ const Projects: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-vakya-paper">
-
+      
       {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4 border-b border-black/5">
+      <section className="pt-32 pb-12 px-4 border-b border-black/5">
         <div className="max-w-7xl mx-auto text-center">
           <p className="font-sans text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 animate-fade-in-up">
             Vakya Productions
@@ -68,22 +68,22 @@ const Projects: React.FC = () => {
           <div className="space-y-32">
             {PROJECTS.map((project, index) => {
               const isEven = index % 2 === 0;
-
+              
               return (
-                <div
-                  key={project.id}
+                <div 
+                  key={project.id} 
                   className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 ${isEven ? '' : 'md:flex-row-reverse'}`}
                 >
                   {/* Visual Side */}
                   <div className="w-full md:w-1/2 flex justify-center relative group">
                     {/* The Hazy Gradient/Shadow */}
                     <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 ${project.accentColor} rounded-full blur-[80px] opacity-60 group-hover:opacity-80 transition-opacity duration-700`}></div>
-
+                    
                     {/* Logo */}
-                    <img
-                      src={project.logoPlaceholder}
-                      alt={project.title}
-                      className="relative z-10 w-128 h-128 object-contain drop-shadow-sm transform group-hover:scale-100 transition-transform duration-500"
+                    <img 
+                      src={project.logoPlaceholder} 
+                      alt={project.title} 
+                      className="relative z-10 w-64 h-64 object-contain drop-shadow-sm transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
 
@@ -96,8 +96,8 @@ const Projects: React.FC = () => {
                     <p className="font-sans text-lg text-gray-600 leading-relaxed mb-8">
                       {project.description}
                     </p>
-
-                    <a
+                    
+                    <a 
                       href={project.link}
                       className="inline-flex items-center gap-2 font-sans text-sm font-bold uppercase tracking-widest text-vakya-black border-b-2 border-transparent hover:border-vakya-salmon hover:text-gray-600 transition-all pb-1"
                     >
@@ -116,16 +116,16 @@ const Projects: React.FC = () => {
 
       {/* Footer Callout */}
       <section className="py-24 bg-white border-t border-black/5">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h3 className="font-serif text-4xl mb-6">Have an idea for a collaboration?</h3>
-          <p className="font-sans text-gray-500 mb-8">We are always looking to partner with creators on new projects.</p>
-          <button
-            onClick={() => navigate('/contact')}
-            className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
-          >
-            Get in Touch
-          </button>
-        </div>
+         <div className="max-w-4xl mx-auto text-center px-4">
+            <h3 className="font-serif text-4xl mb-6">Have an idea for a collaboration?</h3>
+            <p className="font-sans text-gray-500 mb-8">We are always looking to partner with creators on new projects.</p>
+            <button 
+              onClick={() => navigate('/contact')}
+              className="bg-vakya-black text-white px-8 py-3 font-sans font-bold uppercase tracking-widest hover:bg-vakya-salmon hover:text-black transition-colors"
+            >
+              Get in Touch
+            </button>
+         </div>
       </section>
 
     </div>

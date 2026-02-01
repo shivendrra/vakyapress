@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
+  useEffect(() => {
+    document.title = "404 | Vakya";
+  }, []);
+  
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-vakya-paper text-center px-4">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-vakya-paper text-center px-4 pt-20 md:pt-24">
       {/* Abstract Background Element */}
       <div className="absolute font-serif text-[15rem] text-gray-200/50 leading-none select-none pointer-events-none z-0 blur-sm">
         404

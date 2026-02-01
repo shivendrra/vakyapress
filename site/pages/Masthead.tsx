@@ -48,7 +48,7 @@ const Masthead: React.FC = () => {
   if (loading) return <div className="min-h-screen bg-vakya-paper flex items-center justify-center font-serif text-2xl">Loading Masthead...</div>;
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-white pb-24 pt-20 md:pt-24">
 
       {/* Header Image - Full Screen Width */}
       <div className="w-full mb-12">
