@@ -1,4 +1,17 @@
 
+export interface Blog {
+  id: string;
+  title: string;
+  publishedAt: string;
+  author: string;
+  authorImage?: string;
+  authorRole?: string;
+  coverImage: string;
+  domain: string;
+  excerpt: string;
+  content: string;
+}
+
 export interface Article {
   id: string;
   title: string;

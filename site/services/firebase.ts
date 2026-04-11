@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, updateDoc, addDoc, query, orderBy, where } from "firebase/firestore";
-import { Article, UserProfile, UserRole, SiteContent, Product, JobApplication, StaffProfile } from '../types';
+import { Article, Blog, UserProfile, UserRole, SiteContent, Product, JobApplication, StaffProfile } from '../types';
 
 // User provided configuration
 const firebaseConfig = {
@@ -180,6 +180,62 @@ export const getRelatedArticles = async (currentArticleId: string, category: str
     return allArticles
         .filter(a => a.category === category && a.id !== currentArticleId)
         .slice(0, 3);
+};
+
+// --- Data Services (Blogs) ---
+
+export const getBlogs = async (): Promise<Blog[]> => {
+  try {
+    const q = query(collection(db, "blogs"), orderBy("publishedAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    const blogs: Blog[] = [];
+    querySnapshot.forEach((doc) => {
+      blogs.push({ id: doc.id, ...doc.data() } as Blog);
+    });
+    return blogs;
+  } catch (error) {
+    console.error("Error getting blogs: ", error);
+    return [];
+  }
+};
+
+export const getBlogById = async (id: string): Promise<Blog | undefined> => {
+    try {
+        const docRef = doc(db, "blogs", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Blog;
+        }
+        return undefined;
+    } catch (error) {
+        console.error("Error getting blog: ", error);
+        return undefined;
+    }
+};
+
+export const saveBlog = async (blog: Blog, isNew: boolean): Promise<void> => {
+    try {
+        if (isNew) {
+            const { id, ...data } = blog;
+            await addDoc(collection(db, "blogs"), data);
+        } else {
+             const { id, ...data } = blog;
+             const docRef = doc(db, "blogs", id);
+             await updateDoc(docRef, data as any);
+        }
+    } catch (error) {
+        console.error("Error saving blog: ", error);
+        throw error;
+    }
+};
+
+export const deleteBlog = async (id: string): Promise<void> => {
+    try {
+        await deleteDoc(doc(db, "blogs", id));
+    } catch (error) {
+        console.error("Error deleting blog: ", error);
+        throw error;
+    }
 };
 
 // --- Data Services (Products) ---

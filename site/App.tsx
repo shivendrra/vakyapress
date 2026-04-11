@@ -5,6 +5,8 @@ import Footer from './components/Footer';
 import Landing from './pages/Landing';
 import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
 import About from './pages/About';
 import Store from './pages/Store';
 import Contact from './pages/Contact';
@@ -95,6 +97,8 @@ const App: React.FC = () => {
           <Route path="/" element={<Landing articles={articles} videos={siteContent.videos} />} />
           <Route path="/articles" element={<Articles articles={articles} />} />
           <Route path="/articles/:id" element={<ArticleDetail />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
           <Route path="/staff/:slug" element={<StaffProfilePage />} />
           <Route path="/masthead" element={<Masthead />} />
           <Route path="/projects" element={<Projects />} />

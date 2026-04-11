@@ -11,7 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const navLinks: { label: string; path: string }[] = [
     { label: 'Articles', path: '/articles' },
+    { label: 'Blogs', path: '/blogs' },
     { label: 'Store', path: '/store' },
     { label: 'About', path: '/about' },
     { label: 'Contact', path: '/contact' },
@@ -57,16 +58,15 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   // Determine styles based on state
   const isTransparent = isLandingPage && !isScrolled;
-  const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-    isTransparent 
-      ? 'bg-transparent border-transparent py-4' 
+  const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isTransparent
+      ? 'bg-transparent border-transparent py-4'
       : 'bg-white/95 backdrop-blur-md border-b border-black/5 py-0 shadow-sm'
-  }`;
-  
+    }`;
+
   const textColorClass = isTransparent ? 'text-white' : 'text-gray-800';
   const logoFilter = isTransparent ? 'brightness(0) invert(1)' : 'none';
-  const buttonClass = isTransparent 
-    ? 'bg-white text-vakya-black hover:bg-gray-200' 
+  const buttonClass = isTransparent
+    ? 'bg-white text-vakya-black hover:bg-gray-200'
     : 'bg-vakya-black text-white hover:bg-gray-800';
 
   return (
@@ -92,11 +92,10 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               <Link
                 key={link.label}
                 to={link.path}
-                className={`font-sans text-sm uppercase tracking-widest transition-colors ${
-                    isActive(link.path) 
-                        ? (isTransparent ? 'font-bold text-white border-b-2 border-white' : 'font-bold text-black border-b-2 border-black') 
-                        : (isTransparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-black')
-                }`}
+                className={`font-sans text-sm uppercase tracking-widest transition-colors ${isActive(link.path)
+                    ? (isTransparent ? 'font-bold text-white border-b-2 border-white' : 'font-bold text-black border-b-2 border-black')
+                    : (isTransparent ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-black')
+                  }`}
               >
                 {link.label}
               </Link>
