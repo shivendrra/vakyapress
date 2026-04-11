@@ -30,6 +30,16 @@ const ARTICLE_CATEGORIES = [
   'Urbanism'
 ];
 
+export const BLOG_DOMAINS = [
+  'Tech',
+  'Inspiration',
+  'Engineering',
+  'Product',
+  'Design',
+  'Company',
+  'Culture'
+];
+
 const formatDate = (dateInput: string | Date): string => {
   if (!dateInput) return '';
   const date = new Date(dateInput);
@@ -265,10 +275,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
       title: "",
       excerpt: "",
       content: "",
-      author: "Admin",
-      authorImage: "https://picsum.photos/100/100",
-      authorRole: "Editor",
-      domain: "Tech",
+      author: staffList.length > 0 ? staffList[0].name : "Admin",
+      authorImage: staffList.length > 0 ? (staffList[0].image || `https://ui-avatars.com/api/?name=${staffList[0].name}`) : "https://picsum.photos/100/100",
+      authorRole: staffList.length > 0 ? staffList[0].title : "Editor",
+      domain: BLOG_DOMAINS[0],
       coverImage: "https://picsum.photos/seed/blog/1600/900",
       publishedAt: new Date().toISOString(),
     });
@@ -311,8 +321,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
       title: "",
       excerpt: "",
       content: "",
-      author: "Admin",
-      category: "Politics", // Default
+      author: staffList.length > 0 ? staffList[0].name : "Admin",
+      category: ARTICLE_CATEGORIES[0], // Default
       tags: [],
       imageUrl: "https://picsum.photos/800/600",
       publishedAt: new Date().toISOString().split('T')[0], // Use standard ISO YYYY-MM-DD
@@ -506,6 +516,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
               isSaving={isSaving}
               dateToInputString={dateToInputString}
               ARTICLE_CATEGORIES={ARTICLE_CATEGORIES}
+              staffList={staffList}
             />
           )}
 
@@ -519,6 +530,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
               createNewBlog={createNewBlog}
               isSaving={isSaving}
               dateToInputString={dateToInputString}
+              BLOG_DOMAINS={BLOG_DOMAINS}
+              staffList={staffList}
             />
           )}
 

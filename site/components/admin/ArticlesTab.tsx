@@ -1,5 +1,5 @@
 import React from 'react';
-import { Article } from '../../types';
+import { Article, StaffProfile } from '../../types';
 
 interface ArticlesTabProps {
   articles: Article[];
@@ -13,6 +13,7 @@ interface ArticlesTabProps {
   isSaving: boolean;
   dateToInputString: (dateString: string) => string;
   ARTICLE_CATEGORIES: string[];
+  staffList: StaffProfile[];
 }
 
 const ArticlesTab: React.FC<ArticlesTabProps> = ({
@@ -26,8 +27,22 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({
   createNewArticle,
   isSaving,
   dateToInputString,
-  ARTICLE_CATEGORIES
+  ARTICLE_CATEGORIES,
+  staffList
 }) => {
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStaffName = e.target.value;
+    const staff = staffList.find(s => s.name === selectedStaffName);
+    if (staff && editingArticle) {
+      setEditingArticle({
+        ...editingArticle,
+        author: staff.name,
+        imageUrl: staff.image || `https://ui-avatars.com/api/?name=${staff.name}`
+      });
+    } else if (editingArticle) {
+      setEditingArticle({ ...editingArticle, author: selectedStaffName });
+    }
+  };
   return (
     <div>
       {!editingArticle ? (
@@ -96,7 +111,10 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author (Link to Staff Profile)</label>
-              <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingArticle.author} onChange={e => setEditingArticle({ ...editingArticle, author: e.target.value })} placeholder="Matches Staff Name exactly" />
+              <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingArticle.author} onChange={handleAuthorChange}>
+                <option value="">Select Author...</option>
+                {staffList.map(staff => <option key={staff.id} value={staff.name}>{staff.name}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>

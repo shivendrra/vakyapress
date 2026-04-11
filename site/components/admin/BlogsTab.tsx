@@ -1,5 +1,5 @@
 import React from 'react';
-import { Blog } from '../../types';
+import { Blog, StaffProfile } from '../../types';
 
 interface BlogsTabProps {
   blogs: Blog[];
@@ -10,6 +10,8 @@ interface BlogsTabProps {
   createNewBlog: () => void;
   isSaving: boolean;
   dateToInputString: (dateString: string) => string;
+  BLOG_DOMAINS: string[];
+  staffList: StaffProfile[];
 }
 
 const BlogsTab: React.FC<BlogsTabProps> = ({
@@ -20,8 +22,26 @@ const BlogsTab: React.FC<BlogsTabProps> = ({
   handleDeleteBlog,
   createNewBlog,
   isSaving,
-  dateToInputString
+  dateToInputString,
+  BLOG_DOMAINS,
+  staffList
 }) => {
+
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStaffName = e.target.value;
+    const staff = staffList.find(s => s.name === selectedStaffName);
+    if (staff && editingBlog) {
+      setEditingBlog({
+        ...editingBlog,
+        author: staff.name,
+        authorImage: staff.image || `https://ui-avatars.com/api/?name=${staff.name}`,
+        authorRole: staff.title
+      });
+    } else if (editingBlog) {
+      setEditingBlog({ ...editingBlog, author: selectedStaffName });
+    }
+  };
+
   return (
     <div>
       {!editingBlog ? (
@@ -75,7 +95,9 @@ const BlogsTab: React.FC<BlogsTabProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Domain</label>
-              <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingBlog.domain} onChange={e => setEditingBlog({ ...editingBlog, domain: e.target.value })} placeholder="e.g. Tech, Inspiration" />
+              <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingBlog.domain} onChange={e => setEditingBlog({ ...editingBlog, domain: e.target.value })}>
+                {BLOG_DOMAINS.map(domain => <option key={domain} value={domain}>{domain}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Publish Date</label>
@@ -88,7 +110,10 @@ const BlogsTab: React.FC<BlogsTabProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author Name</label>
-              <input className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingBlog.author} onChange={e => setEditingBlog({ ...editingBlog, author: e.target.value })} />
+              <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingBlog.author} onChange={handleAuthorChange}>
+                <option value="">Select Author...</option>
+                {staffList.map(staff => <option key={staff.id} value={staff.name}>{staff.name}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author Role / Company</label>

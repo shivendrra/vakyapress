@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Blog } from '../types';
 import { getBlogById } from '../services/firebase';
 import MarkdownRenderer from '../components/MarkdownRenderer';
@@ -58,21 +58,21 @@ const BlogDetail: React.FC = () => {
             {blog.title}
           </h1>
 
-          <div className="flex items-center gap-4">
+          <Link to={`/staff/${blog.author.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex items-center gap-4 group/author w-max">
             {blog.authorImage ? (
-              <img src={blog.authorImage} alt={blog.author} className="w-12 h-12 rounded-lg object-cover" />
+              <img src={blog.authorImage} alt={blog.author} className="w-12 h-12 rounded-lg object-cover group-hover/author:ring-2 ring-vakya-salmon transition-all" />
             ) : (
-              <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xl">
+              <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xl group-hover/author:ring-2 ring-vakya-salmon transition-all">
                 {blog.author.charAt(0)}
               </div>
             )}
             <div>
-              <p className="font-sans text-gray-900">By {blog.author}</p>
+              <p className="font-sans text-gray-900 group-hover/author:text-vakya-salmon transition-colors">By {blog.author}</p>
               {blog.authorRole && (
                 <p className="font-sans text-sm text-gray-500">{blog.authorRole}</p>
               )}
             </div>
-          </div>
+          </Link>
         </div>
 
         <div className="prose prose-lg max-w-none prose-headings:font-sans prose-headings:font-bold prose-headings:text-gray-900 prose-p:font-serif prose-p:text-gray-800 prose-p:leading-relaxed prose-a:text-vakya-salmon hover:prose-a:text-vakya-black prose-img:rounded-xl">

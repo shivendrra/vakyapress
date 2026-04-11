@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Blog } from '../types';
 import { getBlogs } from '../services/firebase';
 
 const Blogs: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Blogs | Vakya";
@@ -29,30 +28,32 @@ const Blogs: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-16">
           {blogs.map((blog) => (
-            <div key={blog.id} onClick={() => navigate(`/blogs/${blog.id}`)} className="cursor-pointer group flex flex-col h-full">
-              <div className="overflow-hidden mb-6 aspect-video bg-gray-100 rounded-lg">
+            <div key={blog.id} className="group flex flex-col h-full">
+              <Link to={`/blogs/${blog.id}`} className="block overflow-hidden mb-6 aspect-video bg-gray-100 rounded-lg">
                 <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
+              </Link>
               <div className="flex-1">
                 <span className="font-sans text-sm text-gray-500 mb-2 block">{blog.domain}</span>
-                <h2 className="font-sans font-bold text-2xl mb-3 leading-tight group-hover:underline decoration-2 underline-offset-4 text-gray-900">{blog.title}</h2>
+                <Link to={`/blogs/${blog.id}`} className="block">
+                  <h2 className="font-sans font-bold text-2xl mb-3 leading-tight group-hover:underline decoration-2 underline-offset-4 text-gray-900">{blog.title}</h2>
+                </Link>
                 <p className="font-sans text-gray-600 text-base leading-relaxed mb-6 line-clamp-3">{blog.excerpt}</p>
 
-                <div className="flex items-center gap-3 mt-auto">
+                <Link to={`/staff/${blog.author.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex items-center gap-3 mt-auto group/author w-max">
                   {blog.authorImage ? (
-                    <img src={blog.authorImage} alt={blog.author} className="w-10 h-10 rounded-full object-cover" />
+                    <img src={blog.authorImage} alt={blog.author} className="w-10 h-10 rounded-full object-cover group-hover/author:ring-2 ring-vakya-salmon transition-all" />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold group-hover/author:ring-2 ring-vakya-salmon transition-all">
                       {blog.author.charAt(0)}
                     </div>
                   )}
                   <div>
-                    <p className="font-sans text-sm text-gray-900">{blog.author}</p>
+                    <p className="font-sans text-sm text-gray-900 group-hover/author:text-vakya-salmon transition-colors">{blog.author}</p>
                     {blog.authorRole && (
                       <p className="font-sans text-xs text-gray-500">{blog.authorRole}</p>
                     )}
                   </div>
-                </div>
+                </Link>
               </div>
             </div>
           ))}
