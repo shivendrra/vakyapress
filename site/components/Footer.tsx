@@ -43,6 +43,8 @@ const Footer: React.FC = () => {
         <div className="flex flex-wrap gap-x-8 gap-y-4 font-sans font-bold text-sm uppercase tracking-widest mb-12 text-gray-300">
           <Link to="/about" className="hover:text-white hover:underline decoration-2 underline-offset-4">About Us</Link>
           <span className="text-gray-700">|</span>
+          <Link to="/blogs" className="hover:text-white hover:underline decoration-2 underline-offset-4">Blogs</Link>
+          <span className="text-gray-700">|</span>
           <Link to="/masthead" className="hover:text-white hover:underline decoration-2 underline-offset-4">Masthead</Link>
           <span className="text-gray-700">|</span>
           {/* <Link to="/projects" className="hover:text-white hover:underline decoration-2 underline-offset-4">Projects</Link>
