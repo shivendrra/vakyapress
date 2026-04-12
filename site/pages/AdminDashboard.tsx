@@ -124,6 +124,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     setBlogs(b);
     const p = await getProducts();
     setProducts(p);
+    const s = await getAllStaff();
+    setStaffList(s);
   };
 
   const loadApplications = async () => {

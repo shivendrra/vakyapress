@@ -30,7 +30,7 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({
   ARTICLE_CATEGORIES,
   staffList
 }) => {
-  const handleAuthorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedStaffName = e.target.value;
     const staff = staffList.find(s => s.name === selectedStaffName);
     if (staff && editingArticle) {
@@ -111,10 +111,16 @@ const ArticlesTab: React.FC<ArticlesTabProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author (Link to Staff Profile)</label>
-              <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingArticle.author} onChange={handleAuthorChange}>
-                <option value="">Select Author...</option>
-                {staffList.map(staff => <option key={staff.id} value={staff.name}>{staff.name}</option>)}
-              </select>
+              <input
+                list="staff-authors-articles"
+                className="w-full p-3 border border-gray-300 bg-white text-black font-sans"
+                value={editingArticle.author}
+                onChange={handleAuthorChange}
+                placeholder="Start typing author name..."
+              />
+              <datalist id="staff-authors-articles">
+                {staffList.map(staff => <option key={staff.id} value={staff.name} />)}
+              </datalist>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Image URL</label>

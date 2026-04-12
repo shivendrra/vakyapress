@@ -27,7 +27,7 @@ const BlogsTab: React.FC<BlogsTabProps> = ({
   staffList
 }) => {
 
-  const handleAuthorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedStaffName = e.target.value;
     const staff = staffList.find(s => s.name === selectedStaffName);
     if (staff && editingBlog) {
@@ -110,10 +110,16 @@ const BlogsTab: React.FC<BlogsTabProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author Name</label>
-              <select className="w-full p-3 border border-gray-300 bg-white text-black font-sans" value={editingBlog.author} onChange={handleAuthorChange}>
-                <option value="">Select Author...</option>
-                {staffList.map(staff => <option key={staff.id} value={staff.name}>{staff.name}</option>)}
-              </select>
+              <input
+                list="staff-authors-blogs"
+                className="w-full p-3 border border-gray-300 bg-white text-black font-sans"
+                value={editingBlog.author}
+                onChange={handleAuthorChange}
+                placeholder="Start typing author name..."
+              />
+              <datalist id="staff-authors-blogs">
+                {staffList.map(staff => <option key={staff.id} value={staff.name} />)}
+              </datalist>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Author Role / Company</label>
