@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { SiteContent, Video, PageContent, JobPosting, Article, Blog, Product, JobApplication, StaffProfile, UserRole } from '../types';
-import { saveSiteContent, getArticles, saveArticle, deleteArticle, getBlogs, saveBlog, deleteBlog, getProducts, saveProduct, deleteProduct, getJobApplications, updateApplicationStatus, getAllStaff, saveStaffMember, deleteStaffMember } from '../services/firebase';
+import { saveSiteContent, getArticles, saveArticle, deleteArticle, getBlogs, saveBlog, deleteBlog, getProducts, saveProduct, deleteProduct, getJobApplications, updateApplicationStatus, getAllStaff, saveStaffMember, deleteStaffMember, getVideoSources, saveVideoSource, deleteVideoSource } from '../services/firebase';
 import { GoogleGenAI, Type } from "@google/genai";
+import { VideoSource } from '../types';
 import ArticlesTab from '../components/admin/ArticlesTab';
 import BlogsTab from '../components/admin/BlogsTab';
 import StaffTab from '../components/admin/StaffTab';
@@ -10,6 +11,7 @@ import LanderTab from '../components/admin/LanderTab';
 import PagesTab from '../components/admin/PagesTab';
 import CareersTab from '../components/admin/CareersTab';
 import ApplicationsTab from '../components/admin/ApplicationsTab';
+import VideoSourcesTab from '../components/admin/VideoSourcesTab';
 
 interface AdminDashboardProps {
   siteContent: SiteContent;
@@ -75,7 +77,7 @@ const dateToInputString = (dateString: string) => {
 };
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteContent }) => {
-  const [activeTab, setActiveTab] = useState<'articles' | 'blogs' | 'store' | 'staff' | 'lander' | 'pages' | 'careers' | 'applications'>('articles');
+  const [activeTab, setActiveTab] = useState<'articles' | 'blogs' | 'store' | 'staff' | 'lander' | 'pages' | 'careers' | 'applications' | 'sources'>('articles');
   const [editingPage, setEditingPage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
@@ -102,6 +104,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
   const [staffList, setStaffList] = useState<StaffProfile[]>([]);
   const [editingStaff, setEditingStaff] = useState<StaffProfile | null>(null);
 
+  // Video Sources State
+  const [videoSources, setVideoSources] = useState<VideoSource[]>([]);
+  const [editingVideoSource, setEditingVideoSource] = useState<VideoSource | null>(null);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -126,6 +132,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     setProducts(p);
     const s = await getAllStaff();
     setStaffList(s);
+    const v = await getVideoSources();
+    setVideoSources(v);
   };
 
   const loadApplications = async () => {
@@ -371,6 +379,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
     });
   };
 
+  // --- VIDEO SOURCES HANDLERS ---
+  const handleSaveVideoSource = async () => {
+    if (!editingVideoSource) return;
+    setIsSaving(true);
+    try {
+      const isNew = !videoSources.find(v => v.id === editingVideoSource.id);
+      await saveVideoSource(editingVideoSource, isNew);
+      setEditingVideoSource(null);
+      await loadData();
+      setSaveMessage({ text: "Source saved.", type: 'success' });
+    } catch (e) {
+      setSaveMessage({ text: "Error saving source.", type: 'error' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteVideoSource = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this video source?")) return;
+    try {
+      await deleteVideoSource(id);
+      await loadData();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const createNewVideoSource = () => {
+    setEditingVideoSource({
+      id: Date.now().toString(),
+      title: "",
+      date: new Date().toISOString(),
+      videoUrl: "",
+      content: ""
+    });
+  };
+
   // --- VIDEO & PAGE HANDLERS ---
   const getYoutubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -465,6 +510,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
   const TAB_LABELS: Record<string, string> = {
     'articles': 'Editorial',
     'blogs': 'Blogs',
+    'sources': 'Video Sources',
     'store': 'Store',
     'staff': 'Staff & Roles',
     'lander': 'Front Page',
@@ -493,7 +539,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
           {Object.keys(TAB_LABELS).map(tab => (
             <button
               key={tab}
-              onClick={() => { setActiveTab(tab as any); setSaveMessage(null); setEditingArticle(null); setEditingProduct(null); setEditingStaff(null); }}
+              onClick={() => { setActiveTab(tab as any); setSaveMessage(null); setEditingArticle(null); setEditingProduct(null); setEditingStaff(null); setEditingVideoSource(null); }}
               className={`pb-3 font-sans font-bold uppercase tracking-widest text-xs transition-all whitespace-nowrap ${activeTab === tab ? 'border-b-4 border-black text-black' : 'border-b-4 border-transparent text-gray-400 hover:text-gray-600'
                 }`}
             >
@@ -534,6 +580,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ siteContent, setSiteCon
               dateToInputString={dateToInputString}
               BLOG_DOMAINS={BLOG_DOMAINS}
               staffList={staffList}
+            />
+          )}
+
+          {activeTab === 'sources' && (
+            <VideoSourcesTab
+              videoSources={videoSources}
+              editingSource={editingVideoSource}
+              setEditingSource={setEditingVideoSource}
+              handleSaveSource={handleSaveVideoSource}
+              handleDeleteSource={handleDeleteVideoSource}
+              createNewSource={createNewVideoSource}
+              isSaving={isSaving}
             />
           )}
 

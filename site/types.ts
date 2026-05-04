@@ -114,6 +114,14 @@ export interface StaffProfile {
   accessLevel: UserRole; // This controls their login permission
 }
 
+export interface VideoSource {
+  id: string;
+  title: string;
+  date: string;
+  videoUrl: string;
+  content: string;
+}
+
 export interface SiteContent {
   videos: Video[];
   pages: Record<string, PageContent>;

@@ -279,6 +279,62 @@ export const deleteProduct = async (id: string): Promise<void> => {
     }
 };
 
+// --- Video Sources ---
+
+export const getVideoSources = async (): Promise<import('../types').VideoSource[]> => {
+    try {
+        const q = query(collection(db, "videoSources"), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        const sources: import('../types').VideoSource[] = [];
+        querySnapshot.forEach((doc) => {
+            sources.push({ id: doc.id, ...doc.data() } as import('../types').VideoSource);
+        });
+        return sources;
+    } catch (error) {
+        console.error("Error getting video sources: ", error);
+        return [];
+    }
+};
+
+export const getVideoSourceById = async (id: string): Promise<import('../types').VideoSource | undefined> => {
+    try {
+        const docRef = doc(db, "videoSources", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as import('../types').VideoSource;
+        }
+        return undefined;
+    } catch (error) {
+        console.error("Error getting video source: ", error);
+        return undefined;
+    }
+};
+
+export const saveVideoSource = async (source: import('../types').VideoSource, isNew: boolean): Promise<void> => {
+    try {
+        if (isNew) {
+            const { id, ...data } = source;
+            await addDoc(collection(db, "videoSources"), data);
+        } else {
+             const { id, ...data } = source;
+             const docRef = doc(db, "videoSources", id);
+             await updateDoc(docRef, data as any);
+        }
+    } catch (error) {
+        console.error("Error saving video source: ", error);
+        throw error;
+    }
+};
+
+export const deleteVideoSource = async (id: string): Promise<void> => {
+    try {
+        await deleteDoc(doc(db, "videoSources", id));
+    } catch (error) {
+        console.error("Error deleting video source: ", error);
+        throw error;
+    }
+};
+
 // --- Site Content Management ---
 
 export const getSiteContent = async (): Promise<SiteContent | null> => {

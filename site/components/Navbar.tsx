@@ -49,9 +49,9 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const navLinks: { label: string; path: string }[] = [
     { label: 'Articles', path: '/articles' },
     { label: 'Blogs', path: '/blogs' },
-    { label: 'Store', path: '/store' },
+    // { label: 'Store', path: '/store' },
     { label: 'About', path: '/about' },
-    { label: 'Contact', path: '/contact' },
+    // { label: 'Contact', path: '/contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
