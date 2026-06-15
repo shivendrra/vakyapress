@@ -1,4 +1,17 @@
 
+export interface Blog {
+  id: string;
+  title: string;
+  publishedAt: string;
+  author: string;
+  authorImage?: string;
+  authorRole?: string;
+  coverImage: string;
+  domain: string;
+  excerpt: string;
+  content: string;
+}
+
 export interface Article {
   id: string;
   title: string;
@@ -99,6 +112,14 @@ export interface StaffProfile {
     substack?: string;
   };
   accessLevel: UserRole; // This controls their login permission
+}
+
+export interface VideoSource {
+  id: string;
+  title: string;
+  date: string;
+  videoUrl: string;
+  content: string;
 }
 
 export interface SiteContent {
