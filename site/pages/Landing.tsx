@@ -10,6 +10,10 @@ interface LandingProps {
 const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
   const navigate = useNavigate();
 
+  const ytVideoWindow = () => {
+    window.open("https://www.youtube.com/@vakyapress/videos");
+  }
+
   useEffect(() => {
     document.title = "Vakya | Journalism for the People";
   }, []);
@@ -100,7 +104,7 @@ const Landing: React.FC<LandingProps> = ({ articles, videos }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <h2 className="font-serif text-5xl">Watch</h2>
-            <button className="hidden md:block font-sans text-sm font-bold border-b border-black pb-1 hover:text-gray-600">VIEW ALL VIDEOS</button>
+            <button className="hidden md:block font-sans text-sm font-bold border-b border-black pb-1 hover:text-gray-600" onClick={ytVideoWindow}>VIEW ALL VIDEOS</button>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">

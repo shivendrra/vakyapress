@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface TeamMember {
   name: string;
@@ -165,9 +166,9 @@ const About: React.FC = () => {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="font-serif text-4xl mb-6">Be Part of the Story</h2>
           <p className="font-sans text-gray-400 mb-8">We are always looking for new voices. If you have a story to tell, we want to hear it.</p>
-          <button className="bg-white text-vakya-black px-8 py-3 font-sans uppercase tracking-widest font-bold hover:bg-vakya-accent transition-colors">
+          <Link to="/careers" className="bg-white text-vakya-black px-8 py-3 font-sans uppercase tracking-widest font-bold hover:bg-vakya-accent transition-colors">
             Join the Team
-          </button>
+          </Link>
         </div>
       </section>
     </div>
